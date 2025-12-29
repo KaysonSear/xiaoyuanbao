@@ -10,7 +10,8 @@
     "totalFeatures": 150,
     "highPriority": 45,
     "mediumPriority": 70,
-    "lowPriority": 35
+    "lowPriority": 35,
+    "completedFeatures": 40
   },
   "categories": [
     {
@@ -272,7 +273,9 @@
           "name": "User模型定义",
           "priority": "high",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-002",
@@ -473,7 +476,13 @@
           "hours": 3,
           "platform": "all"
         },
-        { "id": "AUTH-018", "name": "QQ登录集成", "priority": "low", "hours": 3, "platform": "all" }
+        {
+          "id": "AUTH-018",
+          "name": "QQ登录集成",
+          "priority": "low",
+          "hours": 3,
+          "platform": "all"
+        }
       ]
     },
     {
