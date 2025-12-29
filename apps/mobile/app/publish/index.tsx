@@ -10,19 +10,12 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
+import { api } from '@/lib';
+import { Category } from '@/types';
 
 const conditions = ['全新', '9成新', '8成新', '7成新', '6成新以下'];
-const categories = [
-  { id: '1', name: '电子数码' },
-  { id: '2', name: '图书教材' },
-  { id: '3', name: '服饰鞋包' },
-  { id: '4', name: '生活用品' },
-  { id: '5', name: '运动户外' },
-  { id: '6', name: '美妆护肤' },
-  { id: '7', name: '租赁服务' },
-  { id: '8', name: '其他' },
-];
 
 export default function PublishItemScreen() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -32,7 +25,35 @@ export default function PublishItemScreen() {
   const [originalPrice, setOriginalPrice] = useState('');
   const [condition, setCondition] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
+
+  const queryClient = useQueryClient();
+
+  // 获取分类
+  const { data: categories, isLoading: isCatsLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => api.get<Category[]>('/categories'),
+  });
+
+  // 发布物品 Mutation
+  const publishMutation = useMutation({
+    mutationFn: (data: unknown) => api.post('/items/create', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      Alert.alert('发布成功', '您的物品已发布', [{ text: '好的', onPress: () => router.back() }]);
+    },
+    onError: (error: Error) => {
+      Alert.alert('发布失败', error.message);
+    },
+  });
+
+  // 模拟添加图片
+  const handleAddImage = () => {
+    if (images.length >= 9) return;
+    // 暂时使用占位图
+    const mockImage = `https://picsum.photos/400/400?random=${Math.random()}`;
+    setImages([...images, mockImage]);
+  };
 
   // 未登录重定向
   if (!isAuthenticated) {
@@ -55,23 +76,24 @@ export default function PublishItemScreen() {
       return;
     }
 
-    if (title.length < 2 || title.length > 50) {
-      Alert.alert('提示', '标题需要2-50个字符');
+    if (images.length === 0) {
+      Alert.alert('提示', '请至少上传一张图片(这里点击添加图片即可)');
       return;
     }
 
-    if (description.length < 10) {
-      Alert.alert('提示', '描述至少10个字符');
-      return;
-    }
-
-    setLoading(true);
-    // 模拟提交
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert('发布成功', '您的物品已发布', [{ text: '好的', onPress: () => router.back() }]);
-    }, 1500);
+    publishMutation.mutate({
+      title,
+      description,
+      price: parseFloat(price),
+      originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
+      images,
+      condition,
+      categoryId,
+      type: 'sale', // 默认出售
+    });
   };
+
+  const isLoading = publishMutation.isPending || isCatsLoading;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -87,12 +109,33 @@ export default function PublishItemScreen() {
       <ScrollView className="flex-1 px-4 py-4">
         {/* 图片上传区域 */}
         <View className="bg-white rounded-xl p-4 mb-4">
-          <Text className="text-gray-800 font-medium mb-3">物品图片</Text>
-          <TouchableOpacity className="w-24 h-24 bg-gray-100 rounded-xl items-center justify-center border-2 border-dashed border-gray-300">
-            <Text className="text-3xl text-gray-400">+</Text>
-            <Text className="text-gray-400 text-xs mt-1">添加图片</Text>
-          </TouchableOpacity>
-          <Text className="text-gray-400 text-xs mt-2">最多9张，第一张为封面</Text>
+          <Text className="text-gray-800 font-medium mb-3">物品图片 ({images.length}/9)</Text>
+          <View className="flex-row flex-wrap">
+            {images.map((img, index) => (
+              <View
+                key={index}
+                className="w-24 h-24 bg-gray-100 rounded-xl mr-2 mb-2 overflow-hidden relative"
+              >
+                {/* 这里应该用 Image 组件 */}
+                <Text className="text-xs p-1">图片{index + 1}</Text>
+                <TouchableOpacity
+                  className="absolute top-0 right-0 bg-red-500 w-5 h-5 items-center justify-center rounded-bl"
+                  onPress={() => setImages(images.filter((_, i) => i !== index))}
+                >
+                  <Text className="text-white text-xs">x</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+            {images.length < 9 && (
+              <TouchableOpacity
+                className="w-24 h-24 bg-gray-100 rounded-xl items-center justify-center border-2 border-dashed border-gray-300"
+                onPress={handleAddImage}
+              >
+                <Text className="text-3xl text-gray-400">+</Text>
+                <Text className="text-gray-400 text-xs mt-1">添加(模拟)</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* 标题 */}
@@ -170,7 +213,7 @@ export default function PublishItemScreen() {
         <View className="bg-white rounded-xl p-4 mb-4">
           <Text className="text-gray-800 font-medium mb-3">分类</Text>
           <View className="flex-row flex-wrap">
-            {categories.map((cat) => (
+            {categories?.map((cat) => (
               <TouchableOpacity
                 key={cat.id}
                 className={`px-4 py-2 rounded-full mr-2 mb-2 ${
@@ -192,11 +235,11 @@ export default function PublishItemScreen() {
       {/* 底部提交按钮 */}
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3">
         <TouchableOpacity
-          className={`py-4 rounded-xl ${loading ? 'bg-primary-300' : 'bg-primary-500'}`}
+          className={`py-4 rounded-xl ${isLoading ? 'bg-primary-300' : 'bg-primary-500'}`}
           onPress={handleSubmit}
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator color="white" />
           ) : (
             <Text className="text-white text-center font-semibold text-lg">发布</Text>

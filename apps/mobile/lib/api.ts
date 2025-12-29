@@ -1,8 +1,13 @@
 import Constants from 'expo-constants';
 import { useAuthStore } from '../store';
 
+import { Platform } from 'react-native';
+
 // API 基础URL
-const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000/api';
+const DEFAULT_API_URL =
+  Platform.OS === 'android' ? 'http://10.0.2.2:3000/api' : 'http://localhost:3000/api';
+
+const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || DEFAULT_API_URL;
 
 // 请求配置类型
 interface RequestConfig extends RequestInit {

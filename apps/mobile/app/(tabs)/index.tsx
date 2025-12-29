@@ -1,34 +1,57 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import { useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// 分类数据
-const categories = [
-  { id: '1', name: '电子数码', icon: '📱' },
-  { id: '2', name: '图书教材', icon: '📚' },
-  { id: '3', name: '服饰鞋包', icon: '👕' },
-  { id: '4', name: '生活用品', icon: '🏠' },
-  { id: '5', name: '运动户外', icon: '⚽' },
-  { id: '6', name: '美妆护肤', icon: '💄' },
-  { id: '7', name: '租赁服务', icon: '🔑' },
-  { id: '8', name: '更多', icon: '➕' },
-];
-
-// 模拟物品数据
-const mockItems = [
-  { id: '1', title: '二手MacBook Pro 2021', price: 6999, image: '💻', condition: '9成新' },
-  { id: '2', title: '高等数学同济版', price: 25, image: '📖', condition: '8成新' },
-  { id: '3', title: '耐克运动鞋 42码', price: 199, image: '👟', condition: '9成新' },
-  { id: '4', title: '小米台灯', price: 49, image: '💡', condition: '全新' },
-];
+import { router } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib';
+import { Category, Item, PaginatedResponse } from '@/types';
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = useCallback(() => {
+  // 获取分类
+  const { data: categories, isLoading: isCatsLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => api.get<Category[]>('/categories'),
+  });
+
+  // 获取推荐物品
+  const {
+    data: itemsData,
+    isLoading: isItemsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['items', 'home'],
+    queryFn: () => api.get<Item[]>('/items'), // 这里后端返回的是 { data: [...] } 还是直接数组?
+    // 后端 /items 返回的是 successResponse(items, meta) -> { success: true, data: items, meta: ... }
+    // api.get 封装会自动返回 data 字段的内容，所以这里得到的应该是 Item[] (根据 api.ts 的实现)
+    // 但是 /items 接口返回的是 PaginatedResponse 结构吗?
+    // 后端代码: return successResponse(items, { page, ... });
+    // api.ts: return json.data as T;
+    // 所以 api.get<Item[]>('/items') 得到的是 Item[]。
+    // 等等，后端 response structure 是 { success: true, data: [...], meta: ... }
+    // api.ts 取的是 json.data。
+    // 所以 api.get<Item[]>('/items') 会返回 items 数组。
+    // 确认后端 /api/items 返回的 data 是 Item[] 还是 { items: Item[], ... }?
+    // 后端: const [items, total] = ...; return successResponse(items, ...);
+    // 所以 data 就是 Item[]。正确。
+  });
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  const isLoading = isCatsLoading || isItemsLoading;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -38,7 +61,10 @@ export default function HomeScreen() {
       >
         {/* 顶部搜索栏 */}
         <View className="bg-white px-4 py-3">
-          <TouchableOpacity className="bg-gray-100 rounded-full px-4 py-3 flex-row items-center">
+          <TouchableOpacity
+            className="bg-gray-100 rounded-full px-4 py-3 flex-row items-center"
+            onPress={() => router.push('/(tabs)/search')}
+          >
             <Text className="text-gray-400 flex-1">搜索你想要的宝贝</Text>
             <Text>🔍</Text>
           </TouchableOpacity>
@@ -46,38 +72,92 @@ export default function HomeScreen() {
 
         {/* 分类网格 */}
         <View className="bg-white mt-2 px-4 py-4">
-          <View className="flex-row flex-wrap">
-            {categories.map((cat) => (
-              <TouchableOpacity key={cat.id} className="w-1/4 items-center py-3">
-                <Text className="text-3xl mb-1">{cat.icon}</Text>
-                <Text className="text-gray-700 text-sm">{cat.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {isCatsLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <View className="flex-row flex-wrap">
+              {categories?.slice(0, 8).map((cat) => (
+                <TouchableOpacity key={cat.id} className="w-1/4 items-center py-3">
+                  <View className="w-12 h-12 bg-gray-100 rounded-full items-center justify-center mb-1">
+                    {/* 这里如果有 icon url 可以用 Image，暂时用首字代替 */}
+                    {cat.icon ? (
+                      <Text className="text-2xl">{cat.icon}</Text>
+                    ) : (
+                      <Text className="text-xl text-primary-500">{cat.name[0]}</Text>
+                    )}
+                  </View>
+                  <Text className="text-gray-700 text-xs">{cat.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* 推荐物品 */}
         <View className="mt-2 px-4">
           <Text className="text-lg font-bold text-gray-800 py-3">推荐好物</Text>
-          <View className="flex-row flex-wrap -mx-1">
-            {mockItems.map((item) => (
-              <TouchableOpacity key={item.id} className="w-1/2 p-1">
-                <View className="bg-white rounded-xl p-3">
-                  <View className="h-32 bg-gray-100 rounded-lg items-center justify-center">
-                    <Text className="text-5xl">{item.image}</Text>
-                  </View>
-                  <Text className="mt-2 text-gray-800 font-medium" numberOfLines={1}>
-                    {item.title}
-                  </Text>
-                  <View className="flex-row items-center justify-between mt-1">
-                    <Text className="text-primary-500 font-bold">¥{item.price}</Text>
-                    <Text className="text-gray-400 text-xs">{item.condition}</Text>
-                  </View>
+          {isLoading ? (
+            <ActivityIndicator size="large" className="py-10" />
+          ) : (
+            <View className="flex-row flex-wrap -mx-1">
+              {itemsData && itemsData.length > 0 ? (
+                itemsData.map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    className="w-1/2 p-1"
+                    onPress={() => router.push(`/item/${item.id}`)}
+                  >
+                    <View className="bg-white rounded-xl p-3 shadow-sm">
+                      <View className="h-32 bg-gray-100 rounded-lg items-center justify-center mb-2 overflow-hidden">
+                        {item.images[0] ? (
+                          // 实际项目中应使用 Image 组件 loading 网络图片
+                          // 既然后端 mock 数据存的是 emoji 字符串或者url
+                          // 这里简单判断一下
+                          item.images[0].startsWith('http') ? (
+                            <Image
+                              source={{ uri: item.images[0] }}
+                              className="w-full h-full"
+                              resizeMode="cover"
+                            />
+                          ) : (
+                            <Text className="text-5xl">{item.images[0]}</Text>
+                          )
+                        ) : (
+                          <Text className="text-gray-300">无图</Text>
+                        )}
+                      </View>
+                      <Text
+                        className="text-gray-800 font-medium text-sm h-10 leading-5"
+                        numberOfLines={2}
+                      >
+                        {item.title}
+                      </Text>
+                      <View className="flex-row items-center justify-between mt-2">
+                        <Text className="text-red-500 font-bold text-base">¥{item.price}</Text>
+                        <Text className="text-gray-400 text-[10px] bg-gray-100 px-1 rounded">
+                          {item.condition}
+                        </Text>
+                      </View>
+                      <View className="flex-row items-center mt-1">
+                        <View className="w-4 h-4 rounded-full bg-gray-200 items-center justify-center mr-1">
+                          <Text className="text-[8px]">{item.seller.nickname[0]}</Text>
+                        </View>
+                        <Text className="text-gray-400 text-xs truncate" numberOfLines={1}>
+                          {item.seller.nickname}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View className="w-full py-10 items-center">
+                  <Text className="text-gray-400">暂无推荐物品</Text>
                 </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+              )}
+            </View>
+          )}
         </View>
+        <View className="h-10" />
       </ScrollView>
     </SafeAreaView>
   );

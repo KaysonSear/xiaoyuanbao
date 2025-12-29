@@ -1,48 +1,34 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
-
-// 模拟物品详情数据
-const mockItem = {
-  id: '1',
-  title: '二手MacBook Pro 2021 M1芯片 16GB内存',
-  description: `出售自用MacBook Pro 2021款
-- M1 Pro芯片
-- 16GB统一内存
-- 512GB固态硬盘
-- 14英寸Liquid Retina XDR显示屏
-- 电池循环次数约200次
-- 无磕碰，屏幕完美
-- 配件齐全，有原装充电器
-
-因换新出售，诚心出售，可小刀`,
-  price: 6999,
-  originalPrice: 14999,
-  images: ['💻'],
-  condition: '9成新',
-  type: 'sale',
-  views: 128,
-  createdAt: '2025-12-28',
-  seller: {
-    id: 's1',
-    nickname: '科技达人',
-    avatar: '👤',
-    creditScore: 95,
-  },
-  category: {
-    name: '电子数码',
-  },
-  school: {
-    name: '北京大学',
-  },
-};
+import { api } from '@/lib';
+import { Item } from '@/types';
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isFavorite, setIsFavorite] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  const {
+    data: item,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['item', id],
+    queryFn: () => api.get<Item>(`/items/${id}`),
+    enabled: !!id,
+  });
 
   const handleContact = () => {
     if (!isAuthenticated) {
@@ -63,8 +49,37 @@ export default function ItemDetailScreen() {
       ]);
       return;
     }
+
+    // 如果是自己发布的物品
+    if (item?.seller.id === useAuthStore.getState().user?.id) {
+      Alert.alert('提示', '不能购买自己发布的物品');
+      return;
+    }
+
     Alert.alert('提示', '购买功能开发中');
   };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+        <Text className="text-gray-500 mb-4">物品加载失败或不存在</Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="px-6 py-2 bg-gray-100 rounded-full"
+        >
+          <Text>返回</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -82,50 +97,71 @@ export default function ItemDetailScreen() {
       <ScrollView className="flex-1">
         {/* 图片区域 */}
         <View className="h-80 bg-gray-100 items-center justify-center">
-          <Text className="text-8xl">{mockItem.images[0]}</Text>
+          {item.images[0]?.startsWith('http') ? (
+            <Image
+              source={{ uri: item.images[0] }}
+              className="w-full h-full"
+              resizeMode="contain"
+            />
+          ) : (
+            <Text className="text-8xl">{item.images[0] || '📦'}</Text>
+          )}
         </View>
 
         {/* 价格和标题 */}
         <View className="px-4 py-4">
           <View className="flex-row items-baseline">
-            <Text className="text-red-500 text-3xl font-bold">¥{mockItem.price}</Text>
-            {mockItem.originalPrice && (
-              <Text className="text-gray-400 line-through ml-2">¥{mockItem.originalPrice}</Text>
+            <Text className="text-red-500 text-3xl font-bold">¥{item.price}</Text>
+            {item.originalPrice && (
+              <Text className="text-gray-400 line-through ml-2">¥{item.originalPrice}</Text>
             )}
           </View>
-          <Text className="text-lg text-gray-800 mt-2">{mockItem.title}</Text>
+          <Text className="text-lg text-gray-800 mt-2 font-medium">{item.title}</Text>
           <View className="flex-row mt-2 space-x-2">
             <Text className="bg-primary-100 text-primary-600 px-2 py-1 rounded text-xs">
-              {mockItem.condition}
+              {item.condition}
             </Text>
             <Text className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs ml-2">
-              {mockItem.category.name}
+              {item.category.name}
+            </Text>
+            <Text className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs ml-2">
+              {item.type === 'sale' ? '出售' : '出租'}
             </Text>
           </View>
         </View>
 
         {/* 卖家信息 */}
         <View className="bg-gray-50 mx-4 p-4 rounded-xl flex-row items-center">
-          <View className="w-12 h-12 bg-primary-100 rounded-full items-center justify-center">
-            <Text className="text-2xl">{mockItem.seller.avatar}</Text>
+          <View className="w-12 h-12 bg-primary-100 rounded-full items-center justify-center overflow-hidden">
+            {item.seller.avatar ? (
+              <Image source={{ uri: item.seller.avatar }} className="w-full h-full" />
+            ) : (
+              <Text className="text-xl text-primary-500">{item.seller.nickname[0]}</Text>
+            )}
           </View>
           <View className="ml-3 flex-1">
-            <Text className="font-medium text-gray-800">{mockItem.seller.nickname}</Text>
-            <Text className="text-gray-500 text-sm">信用分: {mockItem.seller.creditScore}</Text>
+            <Text className="font-medium text-gray-800">{item.seller.nickname}</Text>
+            <Text className="text-gray-500 text-sm">信誉良好</Text>
           </View>
-          <Text className="text-gray-400 text-sm">{mockItem.school.name}</Text>
+          {/* School info might not be available in item.seller from list api but is in detail api */}
+          <Text className="text-gray-400 text-sm">已认证</Text>
         </View>
 
         {/* 物品描述 */}
         <View className="px-4 py-4">
           <Text className="text-gray-800 font-medium mb-2">物品描述</Text>
-          <Text className="text-gray-600 leading-6">{mockItem.description}</Text>
+          <Text className="text-gray-600 leading-6">
+            {item.status === 'available' ? '🔥 ' : ''}
+            {item.description}
+          </Text>
         </View>
 
         {/* 浏览量等信息 */}
-        <View className="px-4 py-2 flex-row">
-          <Text className="text-gray-400 text-sm">👁️ {mockItem.views}次浏览</Text>
-          <Text className="text-gray-400 text-sm ml-4">📅 发布于{mockItem.createdAt}</Text>
+        <View className="px-4 py-2 flex-row pb-8">
+          <Text className="text-gray-400 text-sm">👁️ {item.views}次浏览</Text>
+          <Text className="text-gray-400 text-sm ml-4">
+            📅 发布于 {new Date(item.createdAt).toLocaleDateString()}
+          </Text>
         </View>
 
         <View className="h-24" />
@@ -140,10 +176,15 @@ export default function ItemDetailScreen() {
           <Text className="text-primary-500 font-medium">💬 联系卖家</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="flex-1 items-center justify-center bg-primary-500 rounded-xl py-3 ml-2"
+          className={`flex-1 items-center justify-center rounded-xl py-3 ml-2 ${
+            item.status === 'available' ? 'bg-primary-500' : 'bg-gray-300'
+          }`}
           onPress={handleBuy}
+          disabled={item.status !== 'available'}
         >
-          <Text className="text-white font-medium">立即购买</Text>
+          <Text className="text-white font-medium">
+            {item.status === 'available' ? '立即购买' : '已售出'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
