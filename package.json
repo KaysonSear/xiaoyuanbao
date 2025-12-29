@@ -9,6 +9,7 @@
         "url": "https://github.com/kayson/xiaoyuanbao.git"
     },
     "scripts": {
+        "preinstall": "npx only-allow pnpm",
         "dev:mobile": "pnpm --filter @xiaoyuanbao/mobile dev",
         "dev:backend": "pnpm --filter @xiaoyuanbao/backend dev",
         "dev": "pnpm run dev:mobile & pnpm run dev:backend",
