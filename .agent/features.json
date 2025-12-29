@@ -76,14 +76,18 @@
           "name": "共享类型包(shared-types)创建",
           "priority": "high",
           "hours": 2,
-          "platform": "all"
+          "platform": "all",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "INF-008",
           "name": "共享工具包(shared-utils)创建",
           "priority": "medium",
           "hours": 2,
-          "platform": "all"
+          "platform": "all",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "INF-009",
@@ -99,7 +103,9 @@
           "name": "VS Code工作区配置",
           "priority": "low",
           "hours": 0.5,
-          "platform": "all"
+          "platform": "all",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         }
       ]
     },
