@@ -395,7 +395,9 @@
           "name": "密码登录API",
           "priority": "high",
           "hours": 1.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "AUTH-007",
@@ -1534,5 +1536,6 @@
     "DB-002",
     "DB-003",
     "DB-004"
-  ]
+  ],
+  "completedFeatures": 1
 }

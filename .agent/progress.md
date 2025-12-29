@@ -173,3 +173,11 @@
 - **提交**: `a10774a` feat(AUTH-003): Implement mobile registration API and fix Docker environment
 - **验证**: 集成测试通过 (Register -> Get Me flow)
 - **下次建议**: AUTH-006 (登录API) 或 ITEM-001 (物品API)
+
+### Session #5 (2025-12-29)
+
+- **系统**: Linux
+- **完成功能**: AUTH-006 - 密码登录API
+- **提交**: `pending` feat(AUTH-006): Implement password login API
+- **验证**: E2E测试通过 (Register -> Login -> Get Me)
+- **下次建议**: AUTH-010 (认证中间件) 或 USER-001 (获取当前用户API)
