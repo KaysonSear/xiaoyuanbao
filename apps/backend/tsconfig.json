@@ -12,8 +12,8 @@
     "paths": {
       "@/*": ["./*"],
       "@lib/*": ["./lib/*"],
-      "@xiaoyuanbao/shared-types": ["../../packages/shared-types/src"],
-      "@xiaoyuanbao/shared-utils": ["../../packages/shared-utils/src"]
+      "@campus-treasure/shared-types": ["../../packages/shared-types/src"],
+      "@campus-treasure/shared-utils": ["../../packages/shared-utils/src"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

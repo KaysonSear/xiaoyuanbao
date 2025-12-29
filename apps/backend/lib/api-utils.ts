@@ -73,3 +73,19 @@ export async function parseBody<T>(
     return { error: errors.badRequest('无效的JSON格式') };
   }
 }
+
+// 获取当前用户ID (从 headers 中，由 middleware 注入)
+export function getCurrentUserId(request: NextRequest): string | null {
+  return request.headers.get('x-user-id');
+}
+
+// 确保用户已登录
+export function requireUser(
+  request: NextRequest
+): { userId: string } | { error: NextResponse<ApiResponse> } {
+  const userId = request.headers.get('x-user-id');
+  if (!userId) {
+    return { error: errors.unauthorized() };
+  }
+  return { userId };
+}

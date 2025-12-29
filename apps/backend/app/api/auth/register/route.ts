@@ -61,11 +61,9 @@ export async function POST(request: NextRequest) {
 
     // 5. 生成 JWT Token
     // 注意: 这里生成的 token 签名必须与 verifyToken 中使用的 secret 一致
-    const token = jwt.sign(
-      { userId: user.id },
-      env.JWT_SECRET || 'fallback-secret-for-dev', // 保持与 users/me 一致的 fallback 逻辑(虽然 env 已验证)
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET || 'fallback-secret-for-dev', {
+      expiresIn: '7d',
+    });
 
     // 6. 返回结果
     return successResponse({

@@ -1,43 +1,17 @@
 import { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
-import { prisma, successResponse, errors, env } from '@/lib';
-
-// 从Authorization header提取token
-function getTokenFromHeader(request: NextRequest): string | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-  return authHeader.slice(7);
-}
-
-// 验证token并返回用户ID
-function verifyToken(token: string): { userId: string } | null {
-  try {
-    const decoded = jwt.verify(token, env.JWT_SECRET || 'fallback-secret-for-dev') as {
-      userId: string;
-    };
-    return decoded;
-  } catch {
-    return null;
-  }
-}
+import { prisma, successResponse, errors, requireUser } from '@/lib';
 
 // 获取当前用户信息
 export async function GET(request: NextRequest) {
   try {
-    const token = getTokenFromHeader(request);
-    if (!token) {
-      return errors.unauthorized('请先登录');
+    const authResult = requireUser(request);
+    if ('error' in authResult) {
+      return authResult.error;
     }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return errors.unauthorized('登录已过期，请重新登录');
-    }
+    const { userId } = authResult;
 
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { id: userId },
       select: {
         id: true,
         phone: true,
@@ -68,15 +42,11 @@ export async function GET(request: NextRequest) {
 // 更新用户信息
 export async function PATCH(request: NextRequest) {
   try {
-    const token = getTokenFromHeader(request);
-    if (!token) {
-      return errors.unauthorized('请先登录');
+    const authResult = requireUser(request);
+    if ('error' in authResult) {
+      return authResult.error;
     }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return errors.unauthorized('登录已过期，请重新登录');
-    }
+    const { userId } = authResult;
 
     const body = await request.json();
     const allowedFields = ['nickname', 'avatar'];
@@ -93,7 +63,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const user = await prisma.user.update({
-      where: { id: decoded.userId },
+      where: { id: userId },
       data: updateData,
       select: {
         id: true,
