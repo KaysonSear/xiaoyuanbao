@@ -37,10 +37,13 @@ export default tseslint.config(
     },
     rules: {
       // TypeScript相关
-      '@typescript-eslint/no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -50,8 +53,8 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
-      'eqeqeq': ['error', 'always'],
-      'curly': ['error', 'multi-line'],
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'multi-line'],
     },
   },
 
@@ -78,5 +81,5 @@ export default tseslint.config(
         ...globals.node,
       },
     },
-  },
+  }
 );

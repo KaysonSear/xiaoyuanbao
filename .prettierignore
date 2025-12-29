@@ -1,0 +1,25 @@
+# Prettier忽略文件
+
+# 依赖
+node_modules/
+.pnpm-store/
+
+# 构建输出
+dist/
+build/
+.next/
+.expo/
+out/
+
+# 锁文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 自动生成的文件
+*.min.js
+*.min.css
+
+# 其他
+coverage/
+.cache/

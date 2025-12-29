@@ -20,16 +20,6 @@
       "@xiaoyuanbao/shared-utils": ["../../packages/shared-utils/src"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "app.json"
-  ],
-  "exclude": [
-    "node_modules",
-    ".expo",
-    "dist",
-    "babel.config.js",
-    "metro.config.js"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "app.json"],
+  "exclude": ["node_modules", ".expo", "dist", "babel.config.js", "metro.config.js"]
 }

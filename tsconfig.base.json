@@ -28,11 +28,5 @@
       "@xiaoyuanbao/shared-utils": ["packages/shared-utils/src"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    ".expo",
-    "coverage"
-  ]
+  "exclude": ["node_modules", "dist", ".next", ".expo", "coverage"]
 }

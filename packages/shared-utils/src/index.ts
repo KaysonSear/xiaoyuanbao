@@ -46,7 +46,9 @@ export function formatRelativeTime(date: Date | string): string {
  */
 export function generateOrderNo(): string {
   const timestamp = Date.now().toString();
-  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  const random = Math.floor(Math.random() * 10000)
+    .toString()
+    .padStart(4, '0');
   return `ORD${timestamp}${random}`;
 }
 

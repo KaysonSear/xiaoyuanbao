@@ -5,8 +5,9 @@
 **项目名称：** 校园宝 (Campus Treasure)  
 **项目类型：** Android移动应用 + Web后端  
 **开发团队：**
-- 2408200135  谢凯翔
-- 2401050122  周欣乐
+
+- 2408200135 谢凯翔
+- 2401050122 周欣乐
 
 **文档版本：** v1.0  
 **更新日期：** 2025-12-29
@@ -59,7 +60,7 @@
 │  │   (主数据库)       │   (缓存层)      │  (图片/文件)  │ │
 │  └──────────────────┴─────────────────┴──────────────┘ │
 └─────────────────────────────────────────────────────────┘
-                      
+
 ┌─────────────────────────────────────────────────────────┐
 │               容器化部署 (Docker + Docker Compose)         │
 │  ┌────────────┬────────────┬────────────┬──────────┐   │
@@ -82,57 +83,57 @@
 
 ### 2.1 移动端技术栈
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| **React Native** | 0.76+ | 移动应用开发框架 |
-| **Expo** | SDK 52+ | 开发工具链和原生API访问 |
-| **TypeScript** | 5.6+ | 类型安全的JavaScript超集 |
-| **React Navigation** | 7.x | 应用导航和路由 |
-| **Zustand** | 5.x | 轻量级状态管理 |
-| **React Query** | 5.x | 服务端状态管理和数据获取 |
-| **React Hook Form** | 7.x | 表单处理 |
-| **Zod** | 3.x | 运行时类型验证 |
-| **NativeWind** | 4.x | Tailwind CSS for React Native |
-| **Expo Image Picker** | 15.x | 图片选择和相机 |
-| **Expo Location** | 17.x | 地理位置服务 |
-| **Expo Notifications** | 0.29+ | 推送通知 |
+| 技术                   | 版本    | 用途                          |
+| ---------------------- | ------- | ----------------------------- |
+| **React Native**       | 0.76+   | 移动应用开发框架              |
+| **Expo**               | SDK 52+ | 开发工具链和原生API访问       |
+| **TypeScript**         | 5.6+    | 类型安全的JavaScript超集      |
+| **React Navigation**   | 7.x     | 应用导航和路由                |
+| **Zustand**            | 5.x     | 轻量级状态管理                |
+| **React Query**        | 5.x     | 服务端状态管理和数据获取      |
+| **React Hook Form**    | 7.x     | 表单处理                      |
+| **Zod**                | 3.x     | 运行时类型验证                |
+| **NativeWind**         | 4.x     | Tailwind CSS for React Native |
+| **Expo Image Picker**  | 15.x    | 图片选择和相机                |
+| **Expo Location**      | 17.x    | 地理位置服务                  |
+| **Expo Notifications** | 0.29+   | 推送通知                      |
 
 ### 2.2 后端技术栈
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| **Next.js** | 15.1+ | React全栈框架（App Router） |
-| **TypeScript** | 5.6+ | 类型安全开发 |
-| **Prisma** | 6.x | ORM数据库工具 |
-| **MongoDB** | 8.x | NoSQL数据库 |
-| **Redis** | 7.x | 缓存和会话存储 |
-| **NextAuth.js** | 5.x | 认证解决方案 |
-| **Zod** | 3.x | API参数验证 |
-| **Socket.io** | 4.x | WebSocket实时通信 |
-| **Sharp** | 0.33+ | 图片处理 |
-| **bcrypt** | 5.x | 密码加密 |
+| 技术            | 版本  | 用途                        |
+| --------------- | ----- | --------------------------- |
+| **Next.js**     | 15.1+ | React全栈框架（App Router） |
+| **TypeScript**  | 5.6+  | 类型安全开发                |
+| **Prisma**      | 6.x   | ORM数据库工具               |
+| **MongoDB**     | 8.x   | NoSQL数据库                 |
+| **Redis**       | 7.x   | 缓存和会话存储              |
+| **NextAuth.js** | 5.x   | 认证解决方案                |
+| **Zod**         | 3.x   | API参数验证                 |
+| **Socket.io**   | 4.x   | WebSocket实时通信           |
+| **Sharp**       | 0.33+ | 图片处理                    |
+| **bcrypt**      | 5.x   | 密码加密                    |
 
 ### 2.3 开发工具
 
-| 工具 | 版本 | 用途 |
-|------|------|------|
-| **Docker** | 27.x+ | 容器化 |
-| **Docker Compose** | 2.30+ | 多容器编排 |
-| **pnpm** | 9.x+ | 包管理器（推荐） |
-| **ESLint** | 9.x | 代码检查 |
-| **Prettier** | 3.x | 代码格式化 |
-| **Husky** | 9.x | Git钩子 |
-| **VS Code** | Latest | 推荐IDE |
+| 工具               | 版本   | 用途             |
+| ------------------ | ------ | ---------------- |
+| **Docker**         | 27.x+  | 容器化           |
+| **Docker Compose** | 2.30+  | 多容器编排       |
+| **pnpm**           | 9.x+   | 包管理器（推荐） |
+| **ESLint**         | 9.x    | 代码检查         |
+| **Prettier**       | 3.x    | 代码格式化       |
+| **Husky**          | 9.x    | Git钩子          |
+| **VS Code**        | Latest | 推荐IDE          |
 
 ### 2.4 云服务
 
-| 服务 | 提供商 | 用途 |
-|------|--------|------|
-| **数据库** | MongoDB Atlas | 托管数据库服务 |
+| 服务         | 提供商              | 用途           |
+| ------------ | ------------------- | -------------- |
+| **数据库**   | MongoDB Atlas       | 托管数据库服务 |
 | **对象存储** | 阿里云OSS/腾讯云COS | 图片和文件存储 |
-| **CDN** | 阿里云CDN | 静态资源加速 |
-| **推送服务** | 极光推送/Firebase | 消息推送 |
-| **短信服务** | 阿里云短信 | 验证码发送 |
+| **CDN**      | 阿里云CDN           | 静态资源加速   |
+| **推送服务** | 极光推送/Firebase   | 消息推送       |
+| **短信服务** | 阿里云短信          | 验证码发送     |
 
 ---
 
@@ -141,6 +142,7 @@
 ### 3.1 用户认证模块
 
 #### 3.1.1 注册登录
+
 - [ ] 手机号注册（短信验证码）
 - [ ] 学生身份认证（学号+姓名+学校验证）
 - [ ] 密码登录
@@ -149,6 +151,7 @@
 - [ ] 自动登录（Token持久化）
 
 #### 3.1.2 个人资料
+
 - [ ] 查看/编辑个人信息
 - [ ] 头像上传（裁剪功能）
 - [ ] 实名认证状态显示
@@ -157,6 +160,7 @@
 ### 3.2 物品交易模块
 
 #### 3.2.1 发布物品
+
 - [ ] 拍照/从相册选择图片（最多9张）
 - [ ] 图片裁剪和压缩
 - [ ] 物品分类选择（多级分类）
@@ -168,6 +172,7 @@
 - [ ] 草稿保存
 
 #### 3.2.2 浏览物品
+
 - [ ] 首页feed流（推荐算法）
 - [ ] 分类浏览
 - [ ] 搜索功能（关键词+筛选）
@@ -178,6 +183,7 @@
 - [ ] 举报不当内容
 
 #### 3.2.3 交易流程
+
 - [ ] 在线议价（即时通讯）
 - [ ] 下单购买
 - [ ] 支付集成（微信/支付宝）
@@ -188,12 +194,14 @@
 ### 3.3 物品租赁模块
 
 #### 3.3.1 发布租赁
+
 - [ ] 设置租赁价格（日/周/月）
 - [ ] 设置押金金额
 - [ ] 可租时间段设置
 - [ ] 租赁规则说明
 
 #### 3.3.2 租赁流程
+
 - [ ] 租赁下单
 - [ ] 押金托管
 - [ ] 租期倒计时
@@ -205,6 +213,7 @@
 ### 3.4 消息通知模块
 
 #### 3.4.1 即时通讯
+
 - [ ] 一对一聊天
 - [ ] 文本消息
 - [ ] 图片消息
@@ -213,6 +222,7 @@
 - [ ] 消息推送
 
 #### 3.4.2 系统通知
+
 - [ ] 订单状态通知
 - [ ] 评价提醒
 - [ ] 活动通知
@@ -245,23 +255,27 @@
 ### 3.8 个人中心模块
 
 #### 3.8.1 我的物品
+
 - [ ] 发布中的物品
 - [ ] 已卖出的物品
 - [ ] 已下架的物品
 - [ ] 编辑/删除物品
 
 #### 3.8.2 我的订单
+
 - [ ] 购买订单
 - [ ] 销售订单
 - [ ] 租赁订单
 - [ ] 订单筛选和搜索
 
 #### 3.8.3 我的收藏
+
 - [ ] 收藏的物品列表
 - [ ] 取消收藏
 - [ ] 收藏夹分类
 
 #### 3.8.4 设置
+
 - [ ] 账号安全设置
 - [ ] 通知设置
 - [ ] 隐私设置
@@ -523,6 +537,7 @@ campus-treasure/
 ### 5.2 关键文件说明
 
 #### pnpm-workspace.yaml
+
 ```yaml
 packages:
   - 'apps/*'
@@ -530,6 +545,7 @@ packages:
 ```
 
 #### 根 package.json
+
 ```json
 {
   "name": "campus-treasure",
@@ -772,8 +788,8 @@ db.users.createIndex({ schoolId: 1 });
 db.items.createIndex({ categoryId: 1, status: 1 });
 db.items.createIndex({ sellerId: 1 });
 db.items.createIndex({ schoolId: 1, status: 1 });
-db.items.createIndex({ title: "text", description: "text" }); // 全文搜索
-db.items.createIndex({ coordinates: "2dsphere" }); // 地理位置查询
+db.items.createIndex({ title: 'text', description: 'text' }); // 全文搜索
+db.items.createIndex({ coordinates: '2dsphere' }); // 地理位置查询
 
 // 订单表索引
 db.orders.createIndex({ orderNo: 1 }, { unique: true });
@@ -792,6 +808,7 @@ db.messages.createIndex({ senderId: 1 });
 ### 7.1 RESTful API规范
 
 #### 基础URL
+
 ```
 开发环境: http://localhost:3000/api
 生产环境: https://api.campustreasure.com/api
@@ -1119,19 +1136,16 @@ import { verifyToken } from './lib/auth/jwt';
 export function middleware(request: NextRequest) {
   // 公开路由
   const publicRoutes = ['/api/auth/login', '/api/auth/register', '/api/auth/send-code'];
-  
-  if (publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+
+  if (publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
     return NextResponse.next();
   }
 
   // 验证Token
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
-  
+
   if (!token) {
-    return NextResponse.json(
-      { success: false, error: { message: '未授权' } },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: { message: '未授权' } }, { status: 401 });
   }
 
   try {
@@ -1139,17 +1153,14 @@ export function middleware(request: NextRequest) {
     // 将用户信息添加到请求头
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', payload.userId);
-    
+
     return NextResponse.next({
       request: {
         headers: requestHeaders,
       },
     });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: { message: 'Token无效' } },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: { message: 'Token无效' } }, { status: 401 });
   }
 }
 
@@ -1195,7 +1206,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    
+
     if (!file) {
       return NextResponse.json(
         { success: false, error: { message: '未上传文件' } },
@@ -1214,21 +1225,16 @@ export async function POST(request: NextRequest) {
       .toBuffer();
 
     // 上传到OSS (这里使用Vercel Blob作为示例)
-    const blob = await put(
-      `items/${Date.now()}-${file.name}`,
-      compressedBuffer,
-      { access: 'public' }
-    );
+    const blob = await put(`items/${Date.now()}-${file.name}`, compressedBuffer, {
+      access: 'public',
+    });
 
     return NextResponse.json({
       success: true,
       data: { url: blob.url },
     });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: { message: '上传失败' } },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: { message: '上传失败' } }, { status: 500 });
   }
 }
 ```
@@ -1378,7 +1384,7 @@ export function initializeSocket(httpServer: HTTPServer) {
     socket.on('send:message', async ({ conversationId, message }) => {
       // 保存到数据库
       // const savedMessage = await saveMessage(...);
-      
+
       // 广播给房间内其他用户
       socket.to(conversationId).emit('message:new', { message });
     });
@@ -1419,7 +1425,7 @@ let socket: Socket | null = null;
 
 export async function connectSocket() {
   const token = await getToken();
-  
+
   socket = io('http://localhost:3000', {
     auth: { token },
   });
@@ -1463,7 +1469,8 @@ services:
       context: ../apps/backend
       dockerfile: ../../docker/Dockerfile.backend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - DATABASE_URL=mongodb
+```
