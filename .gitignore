@@ -1,0 +1,83 @@
+# 依赖目录
+node_modules/
+.pnpm-store/
+
+# 构建输出
+dist/
+build/
+.next/
+.expo/
+out/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# 敏感配置 - 绝对不能提交!
+.agent/config.secure.json
+
+# IDE配置
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 日志
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 测试覆盖
+coverage/
+.nyc_output/
+
+# 缓存
+.cache/
+.parcel-cache/
+.turbo/
+
+# Expo
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Android
+*.apk
+*.aab
+*.keystore
+!debug.keystore
+android/app/debug/
+android/.gradle/
+
+# iOS
+ios/Pods/
+*.xcworkspace
+*.xcuserdata
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+
+# Docker
+.docker/
+
+# 临时文件
+tmp/
+temp/
+*.tmp

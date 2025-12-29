@@ -1,0 +1,367 @@
+{
+  "project": {
+    "name": "xiaoyuanbao",
+    "displayName": "校园宝 (Campus Treasure)",
+    "version": "1.0.0",
+    "description": "Campus second-hand trading platform with React Native + Next.js",
+    "createdAt": "2025-12-29T09:25:39+08:00"
+  },
+  "statistics": {
+    "totalFeatures": 150,
+    "highPriority": 45,
+    "mediumPriority": 70,
+    "lowPriority": 35
+  },
+  "categories": [
+    {
+      "id": "infrastructure",
+      "name": "🏗️ 基础架构",
+      "features": [
+        {"id": "INF-001", "name": "Monorepo项目结构初始化", "priority": "high", "hours": 2, "platform": "all"},
+        {"id": "INF-002", "name": "pnpm工作区配置", "priority": "high", "hours": 1, "platform": "all"},
+        {"id": "INF-003", "name": "TypeScript配置", "priority": "high", "hours": 1, "platform": "all"},
+        {"id": "INF-004", "name": "ESLint配置", "priority": "high", "hours": 1, "platform": "all"},
+        {"id": "INF-005", "name": "Prettier配置", "priority": "high", "hours": 0.5, "platform": "all"},
+        {"id": "INF-006", "name": "Husky Git hooks配置", "priority": "medium", "hours": 1, "platform": "all"},
+        {"id": "INF-007", "name": "共享类型包(shared-types)创建", "priority": "high", "hours": 2, "platform": "all"},
+        {"id": "INF-008", "name": "共享工具包(shared-utils)创建", "priority": "medium", "hours": 2, "platform": "all"},
+        {"id": "INF-009", "name": "环境变量配置(.env文件)", "priority": "high", "hours": 1, "platform": "all"},
+        {"id": "INF-010", "name": "VS Code工作区配置", "priority": "low", "hours": 0.5, "platform": "all"}
+      ]
+    },
+    {
+      "id": "mobile-setup",
+      "name": "📱 移动端初始化",
+      "features": [
+        {"id": "MOB-001", "name": "Expo项目初始化", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "MOB-002", "name": "Expo Router配置", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "MOB-003", "name": "NativeWind (Tailwind)配置", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "MOB-004", "name": "Zustand状态管理配置", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "MOB-005", "name": "React Query配置", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "MOB-006", "name": "API客户端封装", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "MOB-007", "name": "主题系统配置", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "MOB-008", "name": "字体资源配置", "priority": "low", "hours": 0.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "backend-setup",
+      "name": "🖥️ 后端初始化",
+      "features": [
+        {"id": "BE-001", "name": "Next.js 15项目初始化", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "BE-002", "name": "Prisma ORM配置", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "BE-003", "name": "MongoDB连接配置", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "BE-004", "name": "Redis缓存配置", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "BE-005", "name": "API响应格式封装", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "BE-006", "name": "错误处理中间件", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "BE-007", "name": "请求验证(Zod)配置", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "BE-008", "name": "日志系统配置", "priority": "medium", "hours": 1, "platform": "backend"}
+      ]
+    },
+    {
+      "id": "database",
+      "name": "💾 数据库",
+      "features": [
+        {"id": "DB-001", "name": "User模型定义", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "DB-002", "name": "School模型定义", "priority": "high", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-003", "name": "Category模型定义", "priority": "high", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-004", "name": "Item模型定义", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "DB-005", "name": "Order模型定义", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "DB-006", "name": "Review模型定义", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-007", "name": "Conversation模型定义", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-008", "name": "Message模型定义", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-009", "name": "PointsRecord模型定义", "priority": "low", "hours": 0.5, "platform": "backend"},
+        {"id": "DB-010", "name": "数据库索引创建", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "DB-011", "name": "初始数据种子脚本", "priority": "medium", "hours": 1.5, "platform": "backend"}
+      ]
+    },
+    {
+      "id": "auth",
+      "name": "🔐 认证授权",
+      "features": [
+        {"id": "AUTH-001", "name": "JWT Token生成/验证", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "AUTH-002", "name": "密码加密(bcrypt)", "priority": "high", "hours": 0.5, "platform": "backend"},
+        {"id": "AUTH-003", "name": "手机号注册API", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "AUTH-004", "name": "短信验证码发送", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "AUTH-005", "name": "验证码校验逻辑", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "AUTH-006", "name": "密码登录API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "AUTH-007", "name": "忘记密码API", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "AUTH-008", "name": "重置密码API", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "AUTH-009", "name": "Token刷新机制", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "AUTH-010", "name": "认证中间件", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "AUTH-011", "name": "学生身份验证API", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "AUTH-012", "name": "移动端Token存储(SecureStore)", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "AUTH-013", "name": "移动端登录页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "AUTH-014", "name": "移动端注册页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "AUTH-015", "name": "移动端验证码输入组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "AUTH-016", "name": "移动端自动登录逻辑", "priority": "medium", "hours": 1, "platform": "mobile"},
+        {"id": "AUTH-017", "name": "微信登录集成", "priority": "low", "hours": 3, "platform": "all"},
+        {"id": "AUTH-018", "name": "QQ登录集成", "priority": "low", "hours": 3, "platform": "all"}
+      ]
+    },
+    {
+      "id": "user",
+      "name": "👤 用户模块",
+      "features": [
+        {"id": "USER-001", "name": "获取当前用户API", "priority": "high", "hours": 0.5, "platform": "backend"},
+        {"id": "USER-002", "name": "更新用户信息API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "USER-003", "name": "获取用户信息API", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "USER-004", "name": "头像上传API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "USER-005", "name": "移动端个人中心页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "USER-006", "name": "移动端编辑个人信息页面", "priority": "medium", "hours": 2, "platform": "mobile"},
+        {"id": "USER-007", "name": "移动端头像选择/裁剪", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "USER-008", "name": "信用等级显示组件", "priority": "low", "hours": 1, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "items",
+      "name": "📦 物品模块",
+      "features": [
+        {"id": "ITEM-001", "name": "获取物品列表API", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "ITEM-002", "name": "获取物品详情API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "ITEM-003", "name": "发布物品API", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "ITEM-004", "name": "更新物品API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "ITEM-005", "name": "删除物品API", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "ITEM-006", "name": "收藏物品API", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "ITEM-007", "name": "取消收藏API", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "ITEM-008", "name": "物品搜索(全文检索)", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "ITEM-009", "name": "物品筛选逻辑", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "ITEM-010", "name": "物品推荐算法", "priority": "low", "hours": 3, "platform": "backend"},
+        {"id": "ITEM-011", "name": "移动端首页Feed流", "priority": "high", "hours": 2.5, "platform": "mobile"},
+        {"id": "ITEM-012", "name": "移动端物品卡片组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-013", "name": "移动端物品详情页", "priority": "high", "hours": 2.5, "platform": "mobile"},
+        {"id": "ITEM-014", "name": "移动端图片预览组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-015", "name": "移动端发布物品页面", "priority": "high", "hours": 3, "platform": "mobile"},
+        {"id": "ITEM-016", "name": "移动端多图选择组件", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "ITEM-017", "name": "移动端图片裁剪组件", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-018", "name": "移动端分类选择组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-019", "name": "移动端物品成色选择", "priority": "medium", "hours": 0.5, "platform": "mobile"},
+        {"id": "ITEM-020", "name": "移动端草稿保存功能", "priority": "low", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-021", "name": "移动端分类浏览页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "ITEM-022", "name": "移动端搜索页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "ITEM-023", "name": "移动端筛选面板组件", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-024", "name": "移动端收藏列表页面", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "ITEM-025", "name": "移动端我的发布页面", "priority": "high", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "orders",
+      "name": "🛒 订单模块",
+      "features": [
+        {"id": "ORD-001", "name": "创建订单API", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "ORD-002", "name": "获取订单列表API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "ORD-003", "name": "获取订单详情API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "ORD-004", "name": "取消订单API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "ORD-005", "name": "确认收货API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "ORD-006", "name": "订单评价API", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "ORD-007", "name": "订单状态流转逻辑", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "ORD-008", "name": "移动端下单页面", "priority": "high", "hours": 2.5, "platform": "mobile"},
+        {"id": "ORD-009", "name": "移动端订单列表页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "ORD-010", "name": "移动端订单详情页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "ORD-011", "name": "移动端订单状态组件", "priority": "medium", "hours": 1, "platform": "mobile"},
+        {"id": "ORD-012", "name": "移动端评价页面", "priority": "medium", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "payment",
+      "name": "💳 支付模块",
+      "features": [
+        {"id": "PAY-001", "name": "支付订单API", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "PAY-002", "name": "微信支付集成", "priority": "high", "hours": 3, "platform": "all"},
+        {"id": "PAY-003", "name": "支付宝支付集成", "priority": "high", "hours": 3, "platform": "all"},
+        {"id": "PAY-004", "name": "支付回调处理", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "PAY-005", "name": "退款API", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "PAY-006", "name": "移动端支付选择页面", "priority": "high", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "rental",
+      "name": "🔄 租赁模块",
+      "features": [
+        {"id": "RENT-001", "name": "租赁价格设置逻辑", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "RENT-002", "name": "租赁下单API", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "RENT-003", "name": "押金托管逻辑", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "RENT-004", "name": "续租API", "priority": "low", "hours": 1.5, "platform": "backend"},
+        {"id": "RENT-005", "name": "归还验收API", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "RENT-006", "name": "押金退还API", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "RENT-007", "name": "移动端租赁设置组件", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "RENT-008", "name": "移动端租期选择组件", "priority": "medium", "hours": 1, "platform": "mobile"},
+        {"id": "RENT-009", "name": "移动端租赁倒计时组件", "priority": "low", "hours": 1, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "chat",
+      "name": "💬 聊天模块",
+      "features": [
+        {"id": "CHAT-001", "name": "Socket.io服务器配置", "priority": "high", "hours": 2, "platform": "backend"},
+        {"id": "CHAT-002", "name": "对话列表API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "CHAT-003", "name": "获取消息API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "CHAT-004", "name": "发送消息API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "CHAT-005", "name": "标记已读API", "priority": "medium", "hours": 0.5, "platform": "backend"},
+        {"id": "CHAT-006", "name": "移动端Socket连接", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "CHAT-007", "name": "移动端对话列表页面", "priority": "high", "hours": 2, "platform": "mobile"},
+        {"id": "CHAT-008", "name": "移动端聊天页面", "priority": "high", "hours": 3, "platform": "mobile"},
+        {"id": "CHAT-009", "name": "移动端消息气泡组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "CHAT-010", "name": "移动端图片消息组件", "priority": "medium", "hours": 1, "platform": "mobile"},
+        {"id": "CHAT-011", "name": "移动端位置分享组件", "priority": "low", "hours": 1.5, "platform": "mobile"},
+        {"id": "CHAT-012", "name": "移动端输入状态显示", "priority": "low", "hours": 1, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "notification",
+      "name": "🔔 通知模块",
+      "features": [
+        {"id": "NOTIF-001", "name": "推送服务集成", "priority": "medium", "hours": 2.5, "platform": "backend"},
+        {"id": "NOTIF-002", "name": "订单通知发送", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "NOTIF-003", "name": "消息通知发送", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "NOTIF-004", "name": "移动端推送接收", "priority": "medium", "hours": 2, "platform": "mobile"},
+        {"id": "NOTIF-005", "name": "移动端通知列表页面", "priority": "medium", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "upload",
+      "name": "📤 文件上传",
+      "features": [
+        {"id": "UP-001", "name": "图片上传API", "priority": "high", "hours": 1.5, "platform": "backend"},
+        {"id": "UP-002", "name": "批量图片上传API", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "UP-003", "name": "图片压缩处理(Sharp)", "priority": "high", "hours": 1, "platform": "backend"},
+        {"id": "UP-004", "name": "OSS存储集成", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "UP-005", "name": "移动端图片选择Hook", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "UP-006", "name": "移动端相机拍照", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UP-007", "name": "移动端图片压缩", "priority": "medium", "hours": 1, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "location",
+      "name": "📍 位置服务",
+      "features": [
+        {"id": "LOC-001", "name": "移动端定位权限请求", "priority": "high", "hours": 0.5, "platform": "mobile"},
+        {"id": "LOC-002", "name": "移动端获取当前位置", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "LOC-003", "name": "移动端位置选择组件", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "LOC-004", "name": "后端地理位置查询", "priority": "medium", "hours": 1.5, "platform": "backend"}
+      ]
+    },
+    {
+      "id": "points",
+      "name": "🌱 环保积分",
+      "features": [
+        {"id": "PTS-001", "name": "积分获取逻辑", "priority": "low", "hours": 1.5, "platform": "backend"},
+        {"id": "PTS-002", "name": "积分余额API", "priority": "low", "hours": 0.5, "platform": "backend"},
+        {"id": "PTS-003", "name": "积分记录API", "priority": "low", "hours": 1, "platform": "backend"},
+        {"id": "PTS-004", "name": "移动端积分页面", "priority": "low", "hours": 1.5, "platform": "mobile"},
+        {"id": "PTS-005", "name": "移动端积分排行榜", "priority": "low", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "ui-components",
+      "name": "🎨 UI组件库",
+      "features": [
+        {"id": "UI-001", "name": "Button组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-002", "name": "Input组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-003", "name": "Modal组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-004", "name": "Toast组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-005", "name": "Loading组件", "priority": "high", "hours": 0.5, "platform": "mobile"},
+        {"id": "UI-006", "name": "Avatar组件", "priority": "medium", "hours": 0.5, "platform": "mobile"},
+        {"id": "UI-007", "name": "Badge组件", "priority": "medium", "hours": 0.5, "platform": "mobile"},
+        {"id": "UI-008", "name": "Card组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-009", "name": "TabBar组件", "priority": "high", "hours": 1.5, "platform": "mobile"},
+        {"id": "UI-010", "name": "Header组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-011", "name": "Empty状态组件", "priority": "medium", "hours": 0.5, "platform": "mobile"},
+        {"id": "UI-012", "name": "下拉刷新组件", "priority": "high", "hours": 1, "platform": "mobile"},
+        {"id": "UI-013", "name": "无限滚动组件", "priority": "high", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "settings",
+      "name": "⚙️ 设置模块",
+      "features": [
+        {"id": "SET-001", "name": "移动端设置页面", "priority": "medium", "hours": 1.5, "platform": "mobile"},
+        {"id": "SET-002", "name": "移动端通知设置", "priority": "low", "hours": 1, "platform": "mobile"},
+        {"id": "SET-003", "name": "移动端隐私设置", "priority": "low", "hours": 1, "platform": "mobile"},
+        {"id": "SET-004", "name": "移动端关于页面", "priority": "low", "hours": 0.5, "platform": "mobile"},
+        {"id": "SET-005", "name": "移动端退出登录", "priority": "high", "hours": 0.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "deployment",
+      "name": "🚀 部署配置",
+      "features": [
+        {"id": "DEP-001", "name": "Docker后端镜像", "priority": "medium", "hours": 2, "platform": "backend"},
+        {"id": "DEP-002", "name": "Docker Compose配置", "priority": "medium", "hours": 2, "platform": "all"},
+        {"id": "DEP-003", "name": "Nginx反向代理配置", "priority": "medium", "hours": 1.5, "platform": "backend"},
+        {"id": "DEP-004", "name": "GitHub Actions CI/CD", "priority": "low", "hours": 2.5, "platform": "all"},
+        {"id": "DEP-005", "name": "Expo EAS Build配置", "priority": "medium", "hours": 2, "platform": "mobile"},
+        {"id": "DEP-006", "name": "APK构建配置", "priority": "medium", "hours": 1.5, "platform": "mobile"}
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "🧪 测试",
+      "features": [
+        {"id": "TEST-001", "name": "Jest后端配置", "priority": "medium", "hours": 1, "platform": "backend"},
+        {"id": "TEST-002", "name": "API单元测试", "priority": "medium", "hours": 3, "platform": "backend"},
+        {"id": "TEST-003", "name": "移动端组件测试配置", "priority": "low", "hours": 1.5, "platform": "mobile"},
+        {"id": "TEST-004", "name": "E2E测试配置", "priority": "low", "hours": 2, "platform": "all"}
+      ]
+    },
+    {
+      "id": "docs",
+      "name": "📝 文档",
+      "features": [
+        {"id": "DOC-001", "name": "README.md编写", "priority": "medium", "hours": 1.5, "platform": "all"},
+        {"id": "DOC-002", "name": "API文档生成", "priority": "low", "hours": 2, "platform": "backend"},
+        {"id": "DOC-003", "name": "开发指南编写", "priority": "low", "hours": 1.5, "platform": "all"},
+        {"id": "DOC-004", "name": "部署指南编写", "priority": "low", "hours": 1, "platform": "all"}
+      ]
+    }
+  ],
+  "developmentPhases": [
+    {
+      "phase": 1,
+      "name": "项目基础架构",
+      "duration": "1周",
+      "features": ["INF-*", "MOB-*", "BE-*", "DB-*"]
+    },
+    {
+      "phase": 2,
+      "name": "认证与用户系统",
+      "duration": "1周",
+      "features": ["AUTH-*", "USER-*", "UI-*"]
+    },
+    {
+      "phase": 3,
+      "name": "核心交易功能",
+      "duration": "2周",
+      "features": ["ITEM-*", "UP-*", "LOC-*"]
+    },
+    {
+      "phase": 4,
+      "name": "订单与支付",
+      "duration": "1.5周",
+      "features": ["ORD-*", "PAY-*"]
+    },
+    {
+      "phase": 5,
+      "name": "通讯与通知",
+      "duration": "1周",
+      "features": ["CHAT-*", "NOTIF-*"]
+    },
+    {
+      "phase": 6,
+      "name": "租赁与积分",
+      "duration": "1周",
+      "features": ["RENT-*", "PTS-*", "SET-*"]
+    },
+    {
+      "phase": 7,
+      "name": "测试与部署",
+      "duration": "1周",
+      "features": ["TEST-*", "DEP-*", "DOC-*"]
+    }
+  ],
+  "recommendedStartingFeatures": [
+    "INF-001", "INF-002", "INF-003",
+    "MOB-001", "MOB-002",
+    "BE-001", "BE-002", "BE-003",
+    "DB-001", "DB-002", "DB-003", "DB-004"
+  ]
+}
