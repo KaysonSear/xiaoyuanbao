@@ -11,7 +11,7 @@ export default function PublishScreen() {
       router.push('/(auth)/login');
       return;
     }
-    // TODO: 跳转到发布页面
+    router.push('/publish');
   };
 
   return (
