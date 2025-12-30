@@ -266,10 +266,12 @@
 ### Session #9 (2025-12-30)
 
 - **系统**: Linux
-- **整体进度**: 55/68 → **56/68 (82%)**
+- **整体进度**: 55/68 → **57/68 (83%)**
 - **完成功能**:
   1. ITEM-015 Polish - 完善发布物品页面 (接入 expo-image-picker 实现真实图片上传)
   2. PAY-006 - 移动端支付选择页面 (收银台页面 + 对接模拟支付)
+  3. FAVOR-001 - 物品收藏功能 (后端Schema/API + 移动端对接)
 - **提交**:
   - `22783aa` feat(ITEM-015,PAY-006): Polish publish and payment flow
-- **验证**: TypeScript 类型检查通过, ImagePicker 集成完成
+  - `8c350b0` feat(FAVOR-001): Implement Item Favorites
+- **验证**: TypeScript 类型检查通过, ImagePicker 集成完成, Prisma Schema 更新
