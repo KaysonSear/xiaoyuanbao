@@ -37,6 +37,32 @@ export interface Order {
   createdAt: string;
 }
 
+export interface Message {
+  id: string;
+  senderId: string;
+  sender: {
+    id: string;
+    nickname: string;
+    avatar?: string;
+  };
+  receiverId: string;
+  content: string;
+  type: 'text' | 'image';
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface Conversation {
+  user: {
+    id: string;
+    nickname: string;
+    avatar?: string;
+  };
+  lastMessage: string;
+  unreadCount: number;
+  createdAt: string;
+}
+
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;

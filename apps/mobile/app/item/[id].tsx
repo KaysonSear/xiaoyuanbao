@@ -38,7 +38,7 @@ export default function ItemDetailScreen() {
       ]);
       return;
     }
-    Alert.alert('提示', '消息功能开发中');
+    router.push(`/message/${item?.seller.id}`);
   };
 
   const handleBuy = () => {
