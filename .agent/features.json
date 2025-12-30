@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 44
+    "completedFeatures": 45
   },
   "categories": [
     {
@@ -454,7 +454,9 @@
           "name": "获取物品列表API",
           "priority": "high",
           "hours": 2,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "ITEM-002",
