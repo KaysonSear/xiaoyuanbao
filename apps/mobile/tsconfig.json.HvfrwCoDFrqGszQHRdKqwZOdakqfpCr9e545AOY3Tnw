@@ -1,0 +1,56 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "ESNext",
+    "jsx": "react-native",
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ],
+      "@store/*": [
+        "./store/*"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
+      "@campus-treasure/shared-types": [
+        "../../packages/shared-types/src"
+      ],
+      "@campus-treasure/shared-utils": [
+        "../../packages/shared-utils/src"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "app.json",
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".expo",
+    "dist",
+    "babel.config.js",
+    "metro.config.js"
+  ]
+}

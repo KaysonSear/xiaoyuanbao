@@ -6,23 +6,7 @@ import { prisma, successResponse, errors, parseBody, env } from '@/lib';
 // 创建订单Schema
 const createOrderSchema = z.object({
   itemId: z.string(),
-  deliveryType: z.enum(['delivery', 'pickup']),
-  address: z.string().optional(),
-  contactPhone: z.string().min(11),
-  remark: z.string().optional(),
 });
-
-// 生成订单号
-function generateOrderNo() {
-  const timestamp = new Date()
-    .toISOString()
-    .replace(/[-:T.]/g, '')
-    .slice(0, 14);
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, '0');
-  return `ORD${timestamp}${random}`;
-}
 
 // 验证Token
 function getUserId(req: NextRequest): string | null {
@@ -36,6 +20,7 @@ function getUserId(req: NextRequest): string | null {
   }
 }
 
+// POST - 创建订单
 export async function POST(req: NextRequest) {
   const userId = getUserId(req);
   if (!userId) return errors.unauthorized();
@@ -47,7 +32,7 @@ export async function POST(req: NextRequest) {
   if ('error' in result) return result.error;
   const data = result.data;
 
-  // 1. 检查物品状态
+  // 检查物品状态
   const item = await prisma.item.findUnique({
     where: { id: data.itemId },
     include: { seller: true },
@@ -57,26 +42,39 @@ export async function POST(req: NextRequest) {
   if (item.status !== 'available') return errors.badRequest('物品已售出或下架');
   if (item.sellerId === user.id) return errors.badRequest('不能购买自己的物品');
 
-  // 2. 开启事务
+  // 开启事务创建订单
   try {
     const order = await prisma.$transaction(async (tx) => {
+      // 更新物品状态
       await tx.item.update({
         where: { id: item.id },
         data: { status: 'sold' },
       });
 
+      // 创建订单
       return await tx.order.create({
         data: {
-          orderNo: generateOrderNo(),
           itemId: item.id,
           buyerId: user.id,
-          sellerId: item.sellerId,
-          type: 'purchase',
           amount: item.price,
           status: 'pending',
-          deliveryType: data.deliveryType,
-          address: data.address,
-          contactPhone: data.contactPhone,
+        },
+        include: {
+          item: {
+            select: {
+              id: true,
+              title: true,
+              images: true,
+              price: true,
+              sellerId: true,
+              seller: {
+                select: { id: true, nickname: true, avatar: true },
+              },
+            },
+          },
+          buyer: {
+            select: { id: true, nickname: true, avatar: true },
+          },
         },
       });
     });
@@ -88,23 +86,24 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// GET - 获取订单列表
 export async function GET(req: NextRequest) {
   const userId = getUserId(req);
   if (!userId) return errors.unauthorized();
-
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) return errors.unauthorized();
 
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type') || 'buy';
   const status = searchParams.get('status');
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
   if (type === 'sell') {
-    where.sellerId = user.id;
+    // 卖家订单 - 通过item.sellerId查询
+    where.item = { sellerId: userId };
   } else {
-    where.buyerId = user.id;
+    // 买家订单
+    where.buyerId = userId;
   }
 
   if (status && status !== 'all') {
@@ -121,21 +120,14 @@ export async function GET(req: NextRequest) {
             title: true,
             images: true,
             price: true,
-          },
-        },
-        seller: {
-          select: {
-            id: true,
-            nickname: true,
-            avatar: true,
+            sellerId: true,
+            seller: {
+              select: { id: true, nickname: true, avatar: true },
+            },
           },
         },
         buyer: {
-          select: {
-            id: true,
-            nickname: true,
-            avatar: true,
-          },
+          select: { id: true, nickname: true, avatar: true },
         },
       },
       orderBy: { createdAt: 'desc' },

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { prisma, successResponse, errors, env, invalidate } from '@/lib';
+import { prisma, successResponse, errors, env } from '@/lib';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -24,7 +24,7 @@ function getUserIdFromToken(request: NextRequest): string | null {
 }
 
 // 获取物品详情
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -36,20 +36,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
             id: true,
             nickname: true,
             avatar: true,
-            creditScore: true,
-            creditLevel: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        school: {
-          select: {
-            id: true,
-            name: true,
+            school: true,
           },
         },
       },
@@ -59,13 +46,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return errors.notFound('物品不存在');
     }
 
-    // 增加浏览量
-    await prisma.item.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
-
-    return successResponse({ ...item, views: item.views + 1 });
+    return successResponse(item);
   } catch (error) {
     console.error('Get item detail error:', error);
     return errors.internal('获取物品详情失败');
@@ -97,7 +78,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
-    const allowedFields = ['title', 'description', 'price', 'images', 'condition', 'status'];
+    const allowedFields = [
+      'title',
+      'description',
+      'price',
+      'images',
+      'condition',
+      'category',
+      'status',
+    ];
     const updateData: Record<string, unknown> = {};
 
     for (const field of allowedFields) {
@@ -109,10 +98,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const item = await prisma.item.update({
       where: { id },
       data: updateData,
+      include: {
+        seller: {
+          select: {
+            id: true,
+            nickname: true,
+            avatar: true,
+          },
+        },
+      },
     });
-
-    // 清除缓存
-    await invalidate(`item:${id}`);
 
     return successResponse(item);
   } catch (error) {
@@ -149,9 +144,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       where: { id },
       data: { status: 'removed' },
     });
-
-    // 清除缓存
-    await invalidate(`item:${id}`);
 
     return successResponse({ message: '删除成功' });
   } catch (error) {

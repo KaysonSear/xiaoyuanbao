@@ -37,10 +37,14 @@ export function errorResponse(
   status: number = 400,
   details?: unknown
 ): NextResponse<ApiResponse> {
+  const errorObj: { code: string; message: string; details?: unknown } = { code, message };
+  if (details) {
+    errorObj.details = details;
+  }
   return NextResponse.json(
     {
       success: false,
-      error: { code, message, ...(details && { details }) },
+      error: errorObj,
     },
     { status }
   );

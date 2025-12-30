@@ -29,10 +29,7 @@ export async function POST(request: Request) {
         nickname: true,
         avatar: true,
         passwordHash: true,
-        isVerified: true,
-        creditScore: true,
-        creditLevel: true,
-        ecoPoints: true,
+        school: true,
       },
     });
 

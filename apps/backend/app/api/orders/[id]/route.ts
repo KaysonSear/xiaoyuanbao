@@ -19,21 +19,22 @@ const updateStatusSchema = z.object({
   action: z.enum(['pay', 'ship', 'confirm', 'cancel']),
 });
 
+// GET - 获取订单详情
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const userId = getUserId(req);
   if (!userId) return errors.unauthorized();
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) return errors.unauthorized();
-
   try {
     const order = await prisma.order.findUnique({
       where: { id },
       include: {
-        item: true,
-        seller: {
-          select: { id: true, nickname: true, avatar: true, phone: true },
+        item: {
+          include: {
+            seller: {
+              select: { id: true, nickname: true, avatar: true, phone: true },
+            },
+          },
         },
         buyer: {
           select: { id: true, nickname: true, avatar: true, phone: true },
@@ -43,41 +44,53 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     if (!order) return errors.notFound('订单不存在');
 
-    if (order.buyerId !== user.id && order.sellerId !== user.id) {
+    // 检查权限 - 买家或卖家都可以查看
+    const isBuyer = order.buyerId === userId;
+    const isSeller = order.item.sellerId === userId;
+
+    if (!isBuyer && !isSeller) {
       return errors.forbidden();
     }
 
     return successResponse(order);
   } catch (err) {
+    console.error('Get order error:', err);
     return errors.internal('获取订单详情失败');
   }
 }
 
+// PATCH - 更新订单状态
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const userId = getUserId(req);
   if (!userId) return errors.unauthorized();
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) return errors.unauthorized();
-
   const result = await parseBody(req, updateStatusSchema);
   if ('error' in result) return result.error;
-  const data = result.data;
+  const { action } = result.data;
 
   try {
-    const order = await prisma.order.findUnique({ where: { id } });
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        item: {
+          select: { sellerId: true },
+        },
+      },
+    });
+
     if (!order) return errors.notFound('订单不存在');
 
-    if (order.buyerId !== user.id && order.sellerId !== user.id) {
+    const isBuyer = order.buyerId === userId;
+    const isSeller = order.item.sellerId === userId;
+
+    if (!isBuyer && !isSeller) {
       return errors.forbidden();
     }
 
     let nextStatus = order.status;
-    const isBuyer = order.buyerId === user.id;
-    const isSeller = order.sellerId === user.id;
 
-    switch (data.action) {
+    switch (action) {
       case 'pay':
         if (!isBuyer) return errors.forbidden('只有买家可以支付');
         if (order.status !== 'pending') return errors.badRequest('订单状态错误');
@@ -87,12 +100,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       case 'ship':
         if (!isSeller) return errors.forbidden('只有卖家可以发货');
         if (order.status !== 'paid') return errors.badRequest('订单未支付或已发货');
-        nextStatus = 'shipping';
+        nextStatus = 'shipped';
         break;
 
       case 'confirm':
         if (!isBuyer) return errors.forbidden('只有买家可以确认收货');
-        if (order.status !== 'shipping') return errors.badRequest('订单未发货');
+        if (order.status !== 'shipped') return errors.badRequest('订单未发货');
         nextStatus = 'completed';
         break;
 
@@ -100,9 +113,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         if (order.status === 'completed' || order.status === 'cancelled') {
           return errors.badRequest('订单已结束');
         }
-        if (order.status === 'pending') {
-          nextStatus = 'cancelled';
-        } else if (order.status === 'paid' && isSeller) {
+        if (order.status === 'pending' || (order.status === 'paid' && isSeller)) {
           nextStatus = 'cancelled';
         } else {
           return errors.badRequest('无法取消当前状态的订单');
@@ -112,6 +123,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     if (nextStatus !== order.status) {
       if (nextStatus === 'cancelled') {
+        // 取消订单需要恢复物品状态
         await prisma.$transaction([
           prisma.order.update({
             where: { id },
@@ -125,11 +137,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       } else {
         await prisma.order.update({
           where: { id },
-          data: {
-            status: nextStatus,
-            updatedAt: new Date(),
-            ...(data.action === 'pay' ? { payTime: new Date() } : {}),
-          },
+          data: { status: nextStatus },
         });
       }
     }
