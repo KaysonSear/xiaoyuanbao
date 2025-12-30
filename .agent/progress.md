@@ -226,7 +226,7 @@
 ### Session #8 (2025-12-30)
 
 - **系统**: Linux
-- **整体进度**: 44/68 → **50/68 (74%)**
+- **整体进度**: 44/68 → **51/68 (75%)**
 - **完成功能**:
   1. AUTH-012 - 移动端Token存储(SecureStore)
   2. Schema Migration - 修复所有后端API与简化版Prisma Schema对齐
@@ -236,6 +236,7 @@
   6. ITEM-002 - 获取物品详情API (验证完成)
   7. ITEM-003 - 发布物品API (增加Base64图片支持)
   8. ITEM-008 - 物品搜索API (关键词/价格区间/分类/成色筛选)
+  9. PAY-001 - 模拟支付API (POST /api/orders/:id/pay)
 - **提交**:
   - `e023ddf` feat(AUTH-012): SecureStore token storage
   - `5a89312` refactor: Align API routes with simplified schema
@@ -244,6 +245,7 @@
   - `ddfabbe` feat(USER-004): Avatar upload API
   - `b93c56a` feat(ITEM-002,ITEM-003): Item APIs with Base64 support
   - `d63b66c` feat(ITEM-008): Item search API
+  - `bfe5371` feat(PAY-001): Simulated payment API
 - **验证**: TypeScript 类型检查通过, Prisma generate/validate 成功
 - **改动文件**:
   - [NEW] `apps/mobile/lib/secure-storage.ts` - SecureStore 封装

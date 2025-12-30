@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 50
+    "completedFeatures": 51
   },
   "categories": [
     {
@@ -585,7 +585,9 @@
           "name": "支付订单API (模拟)",
           "priority": "high",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "PAY-006",
