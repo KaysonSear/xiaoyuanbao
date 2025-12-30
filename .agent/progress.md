@@ -226,18 +226,27 @@
 ### Session #8 (2025-12-30)
 
 - **系统**: Linux
+- **整体进度**: 44/68 → **49/68 (72%)**
 - **完成功能**:
   1. AUTH-012 - 移动端Token存储(SecureStore)
   2. Schema Migration - 修复所有后端API与简化版Prisma Schema对齐
   3. Prisma 7 升级 - 从 6.0.0 升级到 7.2.0
+  4. USER-002 - 更新用户信息API (增加school字段)
+  5. USER-004 - 头像上传API (Base64, 2MB限制)
+  6. ITEM-002 - 获取物品详情API (验证完成)
+  7. ITEM-003 - 发布物品API (增加Base64图片支持)
 - **提交**:
-  - `e023ddf` feat(AUTH-012): Implement secure token storage
-  - `5a89312` refactor: Align all API routes with simplified Prisma schema
+  - `e023ddf` feat(AUTH-012): SecureStore token storage
+  - `5a89312` refactor: Align API routes with simplified schema
   - `87298cb` chore: Upgrade to Prisma 7.2.0
+  - `751c768` feat(USER-002): Update user API with school field
+  - `ddfabbe` feat(USER-004): Avatar upload API
+  - `b93c56a` feat(ITEM-002,ITEM-003): Item APIs with Base64 support
 - **验证**: TypeScript 类型检查通过, Prisma generate/validate 成功
 - **改动文件**:
-  - [NEW] `lib/secure-storage.ts` - SecureStore 封装
-  - [NEW] `prisma.config.ts` - Prisma 7 配置文件
-  - [MODIFY] 多个API路由 - 与简化版Schema对齐
+  - [NEW] `apps/mobile/lib/secure-storage.ts` - SecureStore 封装
+  - [NEW] `apps/backend/prisma.config.ts` - Prisma 7 配置文件
+  - [NEW] `apps/backend/app/api/users/me/avatar/route.ts` - 头像上传
+  - [MODIFY] 多个API路由 - 与简化版Schema对齐, 支持Base64图片
   - [REMOVE] `lib/auth.ts`, `api/auth/[...nextauth]` - 移除未使用的NextAuth
-- **下次建议**: USER-002 (更新用户信息API) 或 ITEM-003 (发布物品API验证)
+- **下次建议**: ITEM-008 (物品搜索) 或 USER-005 (移动端个人中心页面)
