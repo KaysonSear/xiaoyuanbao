@@ -313,3 +313,16 @@
 - **验证**:
   - 移动端 TypeScript 类型检查通过
   - 组件集成验证 (Login/Register Screens)
+
+### Session #14 (2025-12-30)
+
+- **系统**: Linux
+- **整体进度**: 63/68 → **64/68 (94%)**
+- **完成功能**:
+  1. DB-011 - 数据库 Seed 脚本 (Users/Items/Orders/Favorites 模拟数据)
+  2. Fix - Prisma 版本回退至 5.22.0 (解决 v7+ Engine 兼容性问题)
+- **提交**:
+  - `3055aef` feat(DB-011): Implement Database Seed Script and Fix Prisma Config
+- **验证**:
+  - `npx prisma db seed` 执行成功
+  - 数据库中生成了 Users(5), Items(20), Favorites(15), Orders(5)
