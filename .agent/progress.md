@@ -222,3 +222,17 @@
   - 中间件 (AUTH-010): OK (Token 验证通过)
   - 获取/更新用户 (USER-001): OK
 - **下一步**: 开始 AUTH-012 (移动端 Token 存储)。
+
+### Session #8 (2025-12-30)
+
+- **系统**: Linux
+- **完成功能**: AUTH-012 - 移动端Token存储(SecureStore)
+- **提交**: `e023ddf` feat(AUTH-012): Implement secure token storage with expo-secure-store
+- **验证**: TypeScript 类型检查通过
+- **改动文件**:
+  - [NEW] `lib/secure-storage.ts` - SecureStore 封装与 Zustand StateStorage 适配器
+  - [MODIFY] `store/index.ts` - 迁移到 SecureStorage
+  - [MODIFY] `lib/index.ts` - 导出新模块
+  - [MODIFY] `types/index.ts` - 添加 PaginatedResponse 类型
+  - [FIX] 修复3处未使用变量的TypeScript错误
+- **下次建议**: ITEM-001 (获取物品列表API) 或 ITEM-003 (发布物品API)
