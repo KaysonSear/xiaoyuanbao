@@ -31,6 +31,7 @@ export default function ProfileScreen() {
 
   const menuItems = [
     { icon: '📦', title: '我发布的', desc: '查看我发布的物品', path: '/profile/my-items' },
+    { icon: '❤️', title: '我的收藏', desc: '收藏的物品', path: '/profile/favorites' },
     { icon: '🛒', title: '我买到的', desc: '我购买的订单', path: '/order/list?type=buy' },
     { icon: '💰', title: '我卖出的', desc: '我售出的订单', path: '/order/list?type=sell' },
     { icon: '💬', title: '我的消息', desc: '聊天记录', path: '/message' },
