@@ -111,7 +111,7 @@ export default function PublishItemScreen() {
         <View className="bg-white rounded-xl p-4 mb-4">
           <Text className="text-gray-800 font-medium mb-3">物品图片 ({images.length}/9)</Text>
           <View className="flex-row flex-wrap">
-            {images.map((img, index) => (
+            {images.map((_img, index) => (
               <View
                 key={index}
                 className="w-24 h-24 bg-gray-100 rounded-xl mr-2 mb-2 overflow-hidden relative"

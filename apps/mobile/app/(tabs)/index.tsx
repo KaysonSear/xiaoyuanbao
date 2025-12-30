@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib';
-import { Category, Item, PaginatedResponse } from '@/types';
+import { Category, Item } from '@/types';
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);

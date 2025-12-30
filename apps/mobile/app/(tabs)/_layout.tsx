@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { View, Text } from 'react-native';
 
 // 简单的Tab图标组件
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
+function TabIcon({ name, focused: _focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
     home: '🏠',
     search: '🔍',
