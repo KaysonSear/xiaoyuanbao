@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 51
+    "completedFeatures": 52
   },
   "categories": [
     {
@@ -614,7 +614,9 @@
           "name": "发送消息API",
           "priority": "high",
           "hours": 1.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "CHAT-008",
