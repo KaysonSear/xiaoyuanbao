@@ -20,6 +20,13 @@
       "@campus-treasure/shared-utils": ["../../packages/shared-utils/src"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "app.json", "nativewind-env.d.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "app.json",
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
   "exclude": ["node_modules", ".expo", "dist", "babel.config.js", "metro.config.js"]
 }

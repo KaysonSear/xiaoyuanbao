@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 
 // API 基础URL
 const DEFAULT_API_URL =
-  Platform.OS === 'android' ? 'http://10.0.2.2:3000/api' : 'http://localhost:3000/api';
+  Platform.OS === 'android' ? 'http://10.201.214.15:3000/api' : 'http://localhost:3000/api';
 
 const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || DEFAULT_API_URL;
 
@@ -47,7 +47,7 @@ async function request<T>(endpoint: string, config: RequestConfig = {}): Promise
   });
 
   // 解析响应
-  const json: ApiResponse<T> = await response.json();
+  const json = (await response.json()) as ApiResponse<T>;
 
   if (!response.ok || !json.success) {
     throw new Error(json.error?.message || '请求失败');

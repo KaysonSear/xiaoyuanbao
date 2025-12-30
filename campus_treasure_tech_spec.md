@@ -76,7 +76,7 @@
 
 - **框架**: Next.js 16.1 (App Router)
 - **语言**: TypeScript
-- **ORM**: Prisma 7.x
+- **ORM**: Prisma 6.x (由于 Prisma 7 暂不支持 MongoDB, 降级使用)
 - **数据库**: MongoDB
 - **缓存**: Redis
 - **实时通信**: Socket.io (用于聊天)

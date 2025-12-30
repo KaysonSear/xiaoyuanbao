@@ -2,12 +2,15 @@
 
 ## 项目概述
 
-| 项目属性        | 内容                          |
-| --------------- | ----------------------------- |
-| **项目名称**    | 校园宝 (Campus Treasure)      |
-| **项目类型**    | Android移动应用 + Web后端     |
-| **初始化日期**  | 2025-12-29                    |
-| **初始化Agent** | Project Initialization Expert |
+| 项目属性        | 内容                                   |
+| --------------- | -------------------------------------- |
+| **项目名称**    | Campus Treasure (Lite)                 |
+| **总体进度**    | 100% (68/68 Features Completed)        |
+| **当前状态**    | ✅ 已完成 (Maintenance / Polish Phase) |
+| **最近更新**    | 2025-12-30                             |
+| **项目类型**    | Android移动应用 + Web后端              |
+| **初始化日期**  | 2025-12-29                             |
+| **初始化Agent** | Project Initialization Expert          |
 
 ---
 
@@ -326,3 +329,32 @@
 - **验证**:
   - `npx prisma db seed` 执行成功
   - 数据库中生成了 Users(5), Items(20), Favorites(15), Orders(5)
+
+### Session #15 (2025-12-30)
+
+- **系统**: Linux
+- **整体进度**: 64/68 (94%)
+- **完成功能**:
+  1. Fix - Prisma 版本最终确定为 6.19.1 (解决 Prisma 7.x MongoDB 兼容性问题)
+  2. DB-011 - 重新验证数据库 Seed 脚本
+- **技术决策**:
+  - 尝试升级 Prisma 7.x 失败 (因 "Client Engine" 强制要求 Adapter 且 MongoDB 暂无官方 Adapter)
+  - 最终降级至 Prisma 6.19.1 (支持 MongoDB Native Engine 的最新版本)
+  - 更新 `campus_treasure_tech_spec.md` 记录此架构决策
+- **提交**:
+  - `(No Git Commit yet - pending user action)`
+- **验证**:
+  - `npx prisma db seed` 在 Prisma 6.19.1 环境下执行成功
+
+### Session #16 (2025-12-30)
+
+- **系统**: Linux
+- **整体进度**: 65/68 (95%)
+- **完成功能**:
+  1. CHAT-001 - Socket.io 服务器配置 (Real-time Backend)
+  2. Mobile Chat - 集成 Socket.io 客户端，实现实时消息接收
+- **架构变更**:
+  - 后端从默认 `next dev` 迁移至自定义 `server.ts` 以支持 Socket.io + Next.js 同构运行
+- **验证**:
+  - 后端服务器成功启动并监听 Socket 连接
+  - 移动端代码编译通过，Socket 服务单例已注入

@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Message } from '@/types';
 import { useAuthStore } from '@/store';
+
+import { socketService } from '@/lib/socket';
+import { useEffect } from 'react';
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>(); // Other user ID
@@ -23,38 +26,87 @@ export default function ChatScreen() {
   const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
-  // 获取消息记录
+  // Socket Connection & Listening
+  useEffect(() => {
+    if (user?.id) {
+      socketService.connect();
+      socketService.joinRoom(user.id);
+
+      const socket = socketService.getSocket();
+
+      const handleReceiveMessage = (newMessage: Message) => {
+        // Only add if it belongs to this conversation (sender is me or sender is empty/other)
+        // Actually, receive_message comes for ANY chat.
+        // We must filter: is this message related to the current chat partner `id`?
+        // Case 1: Partner sent it (senderId === id)
+        // Case 2: I sent it (senderId === user.id) - if we listen to our own echoed messages
+
+        if (newMessage.senderId === id || newMessage.senderId === user.id) {
+          queryClient.setQueryData(['messages', id], (old: Message[] | undefined) => {
+            if (!old) return [newMessage];
+            // Avoid duplicates
+            if (old.find((m) => m.id === newMessage.id)) return old;
+            return [...old, newMessage];
+          });
+          // Scroll to bottom
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        }
+      };
+
+      socket?.on('receive_message', handleReceiveMessage);
+
+      return () => {
+        socket?.off('receive_message', handleReceiveMessage);
+      };
+    }
+  }, [user?.id, id, queryClient]);
+
+  // 获取消息记录 (Initial Load)
   const { data: messagesData } = useQuery({
     queryKey: ['messages', id],
     queryFn: async () => {
       const response = await api.get<{ messages: Message[] }>(`/messages?with=${id}`);
       return response.messages;
     },
-    refetchInterval: 5000, // 简单轮询
-  });
-
-  // 获取对方信息 (从第一条消息或单独获取)
-  // 这里简化处理，假设对方信息已存在或通过其他方式获取
-  // 实际应该有一个 get user by id API，或者从消息列表中提取
-
-  // 发送消息 Mutation
-  const sendMessageMutation = useMutation({
-    mutationFn: async (text: string) => {
-      await api.post('/messages', {
-        receiverId: id,
-        content: text,
-      });
-    },
-    onSuccess: () => {
-      setContent('');
-      queryClient.invalidateQueries({ queryKey: ['messages', id] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-    },
+    // Removed refetchInterval (Polling)
   });
 
   const handleSend = () => {
-    if (!content.trim() || sendMessageMutation.isPending) return;
-    sendMessageMutation.mutate(content);
+    if (!content.trim() || !user) return;
+
+    // 1. Emit via Sockt
+    const socket = socketService.getSocket();
+    socket?.emit('send_message', {
+      senderId: user.id,
+      receiverId: id, // partner id
+      content: content,
+    });
+
+    // 2. Optimistic Update (create a temp message)
+    // Note: Since server.ts doesn't echo back to sender in current logic (I commented it out),
+    // we MUST add it locally. Or uncomment it in server.ts.
+    // For now, let's add locally.
+    const tempMessage: Message = {
+      id: Date.now().toString(),
+      senderId: user.id,
+      receiverId: id,
+      content: content,
+      type: 'text',
+      isRead: false,
+      createdAt: new Date().toISOString(),
+      sender: {
+        id: user.id,
+        nickname: user.nickname,
+        avatar: user.avatar,
+      },
+    };
+
+    queryClient.setQueryData(['messages', id], (old: Message[] | undefined) => {
+      return old ? [...old, tempMessage] : [tempMessage];
+    });
+
+    setContent('');
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
   };
 
   const renderItem = ({ item }: { item: Message }) => {

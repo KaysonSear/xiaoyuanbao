@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 57
+    "completedFeatures": 68
   },
   "categories": [
     {
@@ -260,7 +260,9 @@
           "name": "日志系统配置",
           "priority": "medium",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         }
       ]
     },
@@ -282,35 +284,45 @@
           "name": "School模型定义",
           "priority": "high",
           "hours": 0.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-003",
           "name": "Category模型定义",
           "priority": "high",
           "hours": 0.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-004",
           "name": "Item模型定义",
           "priority": "high",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-005",
           "name": "Order模型定义",
           "priority": "high",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-008",
           "name": "Message模型定义",
           "priority": "medium",
           "hours": 0.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "DB-011",
@@ -332,14 +344,18 @@
           "name": "JWT Token生成/验证",
           "priority": "high",
           "hours": 1.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "AUTH-002",
           "name": "密码加密(bcrypt)",
           "priority": "high",
           "hours": 0.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-29"
         },
         {
           "id": "AUTH-003",
@@ -355,7 +371,9 @@
           "name": "短信验证码发送(模拟)",
           "priority": "high",
           "hours": 2,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "AUTH-006",
@@ -617,7 +635,8 @@
           "name": "Socket.io服务器配置",
           "priority": "high",
           "hours": 2,
-          "platform": "backend"
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "CHAT-004",

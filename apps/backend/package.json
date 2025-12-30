@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "校园宝 Next.js 后端应用",
+  "type": "module",
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "tsx server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production tsx server.ts",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "db:generate": "prisma generate",
@@ -16,7 +17,7 @@
     "clean": "rm -rf .next node_modules"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.19.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "17.2.3",
     "ioredis": "^5.4.0",
@@ -26,6 +27,8 @@
     "next-auth": "5.0.0-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io": "4.8.3",
+    "tsx": "4.21.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
@@ -37,7 +40,7 @@
     "@types/react-dom": "^19.0.0",
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
-    "prisma": "^5.22.0",
+    "prisma": "^6.19.1",
     "ts-jest": "^29.1.2",
     "ts-node": "10.9.2",
     "typescript": "^5.6.0"
