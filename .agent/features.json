@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 45
+    "completedFeatures": 46
   },
   "categories": [
     {
@@ -420,7 +420,9 @@
           "name": "更新用户信息API",
           "priority": "high",
           "hours": 1,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "USER-004",
