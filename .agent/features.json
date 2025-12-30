@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 46
+    "completedFeatures": 47
   },
   "categories": [
     {
@@ -429,7 +429,9 @@
           "name": "头像上传API",
           "priority": "high",
           "hours": 1.5,
-          "platform": "backend"
+          "platform": "backend",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         },
         {
           "id": "USER-005",
