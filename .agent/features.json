@@ -11,7 +11,7 @@
     "highPriority": 40,
     "mediumPriority": 20,
     "lowPriority": 8,
-    "completedFeatures": 55
+    "completedFeatures": 56
   },
   "categories": [
     {
@@ -598,7 +598,9 @@
           "name": "移动端支付选择页面",
           "priority": "high",
           "hours": 1.5,
-          "platform": "mobile"
+          "platform": "mobile",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         }
       ]
     },
