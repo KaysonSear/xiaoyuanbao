@@ -2,16 +2,16 @@ import { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
   Alert,
   ScrollView,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { api } from '@/lib';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
 
 export default function RegisterScreen() {
   const [phone, setPhone] = useState('');
@@ -76,62 +76,43 @@ export default function RegisterScreen() {
 
         {/* 表单 */}
         <View className="space-y-4">
-          <View>
-            <Text className="text-gray-700 mb-2 font-medium">昵称</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="2-20个字符"
-              value={nickname}
-              onChangeText={setNickname}
-              maxLength={20}
-            />
-          </View>
+          <Input
+            label="昵称"
+            placeholder="2-20个字符"
+            value={nickname}
+            onChangeText={setNickname}
+            maxLength={20}
+          />
 
-          <View className="mt-4">
-            <Text className="text-gray-700 mb-2 font-medium">手机号</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="请输入手机号"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-              maxLength={11}
-            />
-          </View>
+          <Input
+            label="手机号"
+            placeholder="请输入手机号"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            maxLength={11}
+            containerClassName="mt-4"
+          />
 
-          <View className="mt-4">
-            <Text className="text-gray-700 mb-2 font-medium">密码</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="至少6位"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          </View>
+          <Input
+            label="密码"
+            placeholder="至少6位"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            containerClassName="mt-4"
+          />
 
-          <View className="mt-4">
-            <Text className="text-gray-700 mb-2 font-medium">确认密码</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="再次输入密码"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-            />
-          </View>
+          <Input
+            label="确认密码"
+            placeholder="再次输入密码"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            containerClassName="mt-4"
+          />
 
-          <TouchableOpacity
-            className={`mt-6 py-4 rounded-xl ${loading ? 'bg-primary-300' : 'bg-primary-500'}`}
-            onPress={handleRegister}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white text-center font-semibold text-lg">注册</Text>
-            )}
-          </TouchableOpacity>
+          <Button title="注册" onPress={handleRegister} loading={loading} block className="mt-6" />
         </View>
 
         {/* 底部链接 */}

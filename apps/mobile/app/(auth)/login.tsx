@@ -1,18 +1,11 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib';
 import { User } from '@/types';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('');
@@ -61,42 +54,27 @@ export default function LoginScreen() {
 
         {/* 表单 */}
         <View className="space-y-4">
-          <View>
-            <Text className="text-gray-700 mb-2 font-medium">手机号</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="请输入手机号"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-              maxLength={11}
-              autoCapitalize="none"
-            />
-          </View>
+          <Input
+            label="手机号"
+            placeholder="请输入手机号"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            maxLength={11}
+            autoCapitalize="none"
+          />
 
-          <View className="mt-4">
-            <Text className="text-gray-700 mb-2 font-medium">密码</Text>
-            <TextInput
-              className="bg-gray-100 px-4 py-3 rounded-xl text-base"
-              placeholder="请输入密码"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-          </View>
+          <Input
+            label="密码"
+            placeholder="请输入密码"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            containerClassName="mt-4"
+          />
 
-          <TouchableOpacity
-            className={`mt-6 py-4 rounded-xl ${loading ? 'bg-primary-300' : 'bg-primary-500'}`}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white text-center font-semibold text-lg">登录</Text>
-            )}
-          </TouchableOpacity>
+          <Button title="登录" onPress={handleLogin} loading={loading} block className="mt-6" />
         </View>
 
         {/* 底部链接 */}
