@@ -7,49 +7,53 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib';
 import { Category, Item } from '@/types';
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [itemsData, setItemsData] = useState<Item[]>([]);
+  const [isCatsLoading, setIsCatsLoading] = useState(true);
+  const [isItemsLoading, setIsItemsLoading] = useState(true);
 
-  // 获取分类
-  const { data: categories, isLoading: isCatsLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.get<Category[]>('/categories'),
-  });
+  const fetchCategories = useCallback(async () => {
+    try {
+      setIsCatsLoading(true);
+      const data = await api.get<Category[]>('/categories');
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    } finally {
+      setIsCatsLoading(false);
+    }
+  }, []);
 
-  // 获取推荐物品
-  const {
-    data: itemsData,
-    isLoading: isItemsLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['items', 'home'],
-    queryFn: () => api.get<Item[]>('/items'), // 这里后端返回的是 { data: [...] } 还是直接数组?
-    // 后端 /items 返回的是 successResponse(items, meta) -> { success: true, data: items, meta: ... }
-    // api.get 封装会自动返回 data 字段的内容，所以这里得到的应该是 Item[] (根据 api.ts 的实现)
-    // 但是 /items 接口返回的是 PaginatedResponse 结构吗?
-    // 后端代码: return successResponse(items, { page, ... });
-    // api.ts: return json.data as T;
-    // 所以 api.get<Item[]>('/items') 得到的是 Item[]。
-    // 等等，后端 response structure 是 { success: true, data: [...], meta: ... }
-    // api.ts 取的是 json.data。
-    // 所以 api.get<Item[]>('/items') 会返回 items 数组。
-    // 确认后端 /api/items 返回的 data 是 Item[] 还是 { items: Item[], ... }?
-    // 后端: const [items, total] = ...; return successResponse(items, ...);
-    // 所以 data 就是 Item[]。正确。
-  });
+  const fetchItems = useCallback(async () => {
+    try {
+      setIsItemsLoading(true);
+      const data = await api.get<Item[]>('/items');
+      setItemsData(data);
+    } catch (error) {
+      console.error('Failed to fetch items:', error);
+    } finally {
+      setIsItemsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchItems();
+  }, [fetchCategories, fetchItems]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refetch();
+    await Promise.all([fetchCategories(), fetchItems()]);
     setRefreshing(false);
-  }, [refetch]);
+  }, [fetchCategories, fetchItems]);
 
   const isLoading = isCatsLoading || isItemsLoading;
 
@@ -76,7 +80,7 @@ export default function HomeScreen() {
             <ActivityIndicator />
           ) : (
             <View className="flex-row flex-wrap">
-              {categories?.slice(0, 8).map((cat) => (
+              {categories?.slice(0, 8).map((cat: Category) => (
                 <TouchableOpacity key={cat.id} className="w-1/4 items-center py-3">
                   <View className="w-12 h-12 bg-gray-100 rounded-full items-center justify-center mb-1">
                     {/* 这里如果有 icon url 可以用 Image，暂时用首字代替 */}
@@ -101,7 +105,7 @@ export default function HomeScreen() {
           ) : (
             <View className="flex-row flex-wrap -mx-1">
               {itemsData && itemsData.length > 0 ? (
-                itemsData.map((item) => (
+                itemsData.map((item: Item) => (
                   <TouchableOpacity
                     key={item.id}
                     className="w-1/2 p-1"

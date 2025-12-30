@@ -1,40 +1,39 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
-import { Item } from '@/types';
+import { Item, Order } from '@/types';
 import { useAuthStore } from '@/store';
 
 export default function CreateOrderScreen() {
   const { itemId } = useLocalSearchParams<{ itemId: string }>();
+  const [item, setItem] = useState<Item | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [deliveryType, setDeliveryType] = useState<'delivery' | 'pickup'>('delivery');
   const [address, setAddress] = useState('');
   const [contactPhone, setContactPhone] = useState(useAuthStore.getState().user?.phone || '');
   const [remark, setRemark] = useState('');
 
-  const { data: item, isLoading } = useQuery({
-    queryKey: ['item', itemId],
-    queryFn: () => api.get<Item>(`/items/${itemId}`),
-    enabled: !!itemId,
-  });
+  const fetchItem = useCallback(async () => {
+    if (!itemId) return;
+    try {
+      setIsLoading(true);
+      const data = await api.get<Item>(`/items/${itemId}`);
+      setItem(data);
+    } catch (error) {
+      console.error('Failed to fetch item:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [itemId]);
 
-  const createOrderMutation = useMutation({
-    mutationFn: (data: unknown) => api.post('/orders', data),
-    onSuccess: (data: any) => {
-      // data.data is Order object because api.post returns json.data
-      const orderId = data.id;
-      Alert.alert('下单成功', '请尽快支付', [
-        { text: '查看订单', onPress: () => router.replace(`/order/${orderId}`) },
-      ]);
-    },
-    onError: (error: Error) => {
-      Alert.alert('下单失败', error.message);
-    },
-  });
+  useEffect(() => {
+    fetchItem();
+  }, [fetchItem]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!contactPhone) {
       Alert.alert('提示', '请填写联系电话');
       return;
@@ -44,13 +43,23 @@ export default function CreateOrderScreen() {
       return;
     }
 
-    createOrderMutation.mutate({
-      itemId,
-      deliveryType,
-      address,
-      contactPhone,
-      remark,
-    });
+    try {
+      setIsSubmitting(true);
+      const result = await api.post<Order>('/orders', {
+        itemId,
+        deliveryType,
+        address,
+        contactPhone,
+        remark,
+      });
+      Alert.alert('下单成功', '请尽快支付', [
+        { text: '查看订单', onPress: () => router.replace(`/order/${result.id}`) },
+      ]);
+    } catch (error) {
+      Alert.alert('下单失败', error instanceof Error ? error.message : '请稍后重试');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading || !item) {
@@ -171,13 +180,11 @@ export default function CreateOrderScreen() {
           <Text className="text-red-500 text-xl font-bold">¥{item.price}</Text>
         </View>
         <TouchableOpacity
-          className="bg-primary-500 px-8 py-3 rounded-full"
+          className={`px-8 py-3 rounded-full ${isSubmitting ? 'bg-primary-300' : 'bg-primary-500'}`}
           onPress={handleSubmit}
-          disabled={createOrderMutation.isPending}
+          disabled={isSubmitting}
         >
-          <Text className="text-white font-medium">
-            {createOrderMutation.isPending ? '提交中...' : '提交订单'}
-          </Text>
+          <Text className="text-white font-medium">{isSubmitting ? '提交中...' : '提交订单'}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

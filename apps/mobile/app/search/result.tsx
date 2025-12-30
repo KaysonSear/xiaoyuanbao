@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,30 +10,35 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Item } from '@/types';
-
-// 获取搜索结果
-const fetchSearchResults = async (params: { q?: string; category?: string }) => {
-  const queryParams = new URLSearchParams();
-  if (params.q) queryParams.append('q', params.q);
-  if (params.category) queryParams.append('category', params.category);
-
-  // Use the new search endpoint
-  const response = await api.get<{ items: Item[] }>(`/items/search?${queryParams.toString()}`);
-  return response.items;
-};
 
 export default function SearchResultScreen() {
   const params = useLocalSearchParams<{ q?: string; category?: string }>();
   const [keyword, setKeyword] = useState(params.q || '');
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: items, isLoading } = useQuery({
-    queryKey: ['search', params.q, params.category],
-    queryFn: () => fetchSearchResults({ q: params.q, category: params.category }),
-    enabled: !!(params.q || params.category),
-  });
+  const fetchSearchResults = useCallback(async () => {
+    if (!params.q && !params.category) return;
+    try {
+      setIsLoading(true);
+      const queryParams = new URLSearchParams();
+      if (params.q) queryParams.append('q', params.q);
+      if (params.category) queryParams.append('category', params.category);
+
+      const response = await api.get<{ items: Item[] }>(`/items/search?${queryParams.toString()}`);
+      setItems(response.items);
+    } catch (error) {
+      console.error('Failed to fetch search results:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [params.q, params.category]);
+
+  useEffect(() => {
+    fetchSearchResults();
+  }, [fetchSearchResults]);
 
   const handleSearch = () => {
     if (!keyword.trim()) return;
@@ -43,7 +48,7 @@ export default function SearchResultScreen() {
   const renderItem = ({ item }: { item: Item }) => (
     <TouchableOpacity
       className="flex-row bg-white p-3 mb-3 rounded-xl mx-4 shadow-sm"
-      onPress={() => router.push(`/item/${item.id}` as any)}
+      onPress={() => router.push(`/item/${item.id}` as never)}
     >
       <Image
         source={{ uri: item.images[0] }}

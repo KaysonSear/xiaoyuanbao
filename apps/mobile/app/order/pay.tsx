@@ -1,10 +1,9 @@
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
 import { Order } from '@/types';
-import { useState } from 'react';
 
 const PAYMENT_METHODS = [
   { id: 'alipay', name: '支付宝 (模拟)', icon: '🟦' },
@@ -15,33 +14,43 @@ const PAYMENT_METHODS = [
 export default function OrderPayScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [selectedMethod, setSelectedMethod] = useState('alipay');
-  const queryClient = useQueryClient();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPaying, setIsPaying] = useState(false);
 
-  // 获取订单详情
-  const { data: order, isLoading } = useQuery({
-    queryKey: ['order', id],
-    queryFn: () => api.get<Order>(`/orders/${id}`),
-    enabled: !!id,
-  });
+  const fetchOrder = useCallback(async () => {
+    if (!id) return;
+    try {
+      setIsLoading(true);
+      const data = await api.get<Order>(`/orders/${id}`);
+      setOrder(data);
+    } catch (error) {
+      console.error('Failed to fetch order:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
-  // 支付 Mutation
-  const payMutation = useMutation({
-    mutationFn: async () => {
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
+
+  const handlePay = async () => {
+    if (!id) return;
+    try {
+      setIsPaying(true);
       // 模拟支付延迟
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return api.post(`/orders/${id}/pay`, {});
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', id] });
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      await api.post(`/orders/${id}/pay`, {});
       Alert.alert('支付成功', '订单已支付', [
         { text: '查看订单', onPress: () => router.replace(`/order/${id}`) },
       ]);
-    },
-    onError: (error: Error) => {
-      Alert.alert('支付失败', error.message);
-    },
-  });
+    } catch (error) {
+      Alert.alert('支付失败', error instanceof Error ? error.message : '请稍后重试');
+    } finally {
+      setIsPaying(false);
+    }
+  };
 
   if (isLoading || !order) {
     return (
@@ -51,10 +60,6 @@ export default function OrderPayScreen() {
       </SafeAreaView>
     );
   }
-
-  const handlePay = () => {
-    payMutation.mutate();
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -105,13 +110,11 @@ export default function OrderPayScreen() {
       {/* 底部按钮 */}
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3">
         <TouchableOpacity
-          className={`py-4 rounded-xl ${
-            payMutation.isPending ? 'bg-primary-300' : 'bg-primary-500'
-          }`}
+          className={`py-4 rounded-xl ${isPaying ? 'bg-primary-300' : 'bg-primary-500'}`}
           onPress={handlePay}
-          disabled={payMutation.isPending}
+          disabled={isPaying}
         >
-          {payMutation.isPending ? (
+          {isPaying ? (
             <ActivityIndicator color="white" />
           ) : (
             <Text className="text-white text-center font-bold text-lg">立即支付</Text>

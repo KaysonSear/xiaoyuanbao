@@ -1,23 +1,45 @@
 import { View, Text, TouchableOpacity, FlatList, Image, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
 import { Item } from '@/types';
 import { useAuthStore } from '@/store';
 
 export default function MyItemsScreen() {
   const user = useAuthStore((state) => state.user);
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const {
-    data: items,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['my-items'],
-    queryFn: () => api.get<Item[]>('/items', { params: { sellerId: user?.id || '' } }),
-    enabled: !!user?.id,
-  });
+  const fetchMyItems = useCallback(
+    async (showRefresh = false) => {
+      if (!user?.id) return;
+      try {
+        if (showRefresh) {
+          setIsRefreshing(true);
+        } else {
+          setIsLoading(true);
+        }
+        const data = await api.get<Item[]>('/items', { sellerId: user.id });
+        setItems(data);
+      } catch (error) {
+        console.error('Failed to fetch my items:', error);
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    },
+    [user?.id]
+  );
+
+  useEffect(() => {
+    fetchMyItems();
+  }, [fetchMyItems]);
+
+  const handleRefresh = () => {
+    fetchMyItems(true);
+  };
 
   const renderItem = ({ item }: { item: Item }) => (
     <TouchableOpacity
@@ -78,8 +100,8 @@ export default function MyItemsScreen() {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 20 }}
-          onRefresh={refetch}
-          refreshing={isLoading}
+          onRefresh={handleRefresh}
+          refreshing={isRefreshing}
           ListEmptyComponent={
             <View className="items-center justify-center py-20">
               <Text className="text-gray-400">暂无发布记录</Text>

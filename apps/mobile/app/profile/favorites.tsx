@@ -1,19 +1,39 @@
 import { View, Text, TouchableOpacity, FlatList, Image, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
 import { Item } from '@/types';
 
 export default function MyFavoritesScreen() {
-  const {
-    data: items,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['my-favorites'],
-    queryFn: () => api.get<Item[]>('/items', { params: { isFavorite: 'true' } }),
-  });
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchFavorites = useCallback(async (showRefresh = false) => {
+    try {
+      if (showRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
+      const data = await api.get<Item[]>('/items', { isFavorite: 'true' });
+      setItems(data);
+    } catch (error) {
+      console.error('Failed to fetch favorites:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, [fetchFavorites]);
+
+  const handleRefresh = () => {
+    fetchFavorites(true);
+  };
 
   const renderItem = ({ item }: { item: Item }) => (
     <TouchableOpacity
@@ -65,8 +85,8 @@ export default function MyFavoritesScreen() {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 20 }}
-          onRefresh={refetch}
-          refreshing={isLoading}
+          onRefresh={handleRefresh}
+          refreshing={isRefreshing}
           ListEmptyComponent={
             <View className="items-center justify-center py-20">
               <Text className="text-gray-400">暂无收藏</Text>

@@ -9,62 +9,42 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib';
 import { Item } from '@/types';
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [item, setItem] = useState<Item | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavoriting, setIsFavoriting] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  const {
-    data: item,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['item', id],
-    queryFn: () => api.get<Item>(`/items/${id}`),
-    enabled: !!id,
-  });
+  const fetchItem = useCallback(async () => {
+    if (!id) return;
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await api.get<Item>(`/items/${id}`);
+      setItem(data);
+      if (data.isFavorite !== undefined) {
+        setIsFavorite(data.isFavorite);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '加载失败');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    if (item?.isFavorite !== undefined) {
-      setIsFavorite(item.isFavorite);
-    }
-  }, [item?.isFavorite]);
+    fetchItem();
+  }, [fetchItem]);
 
-  // Mutation for toggling favorite
-  const favoriteMutation = useMutation({
-    mutationFn: () => api.post(`/items/${id}/favorite`),
-    onSuccess: (data: any) => {
-      // Optimistic update or refetch
-      // data.data.isFavorite is the new state
-      setIsFavorite(data.isFavorite);
-    },
-    onError: (error: Error) => {
-      // Revert state if needed, here just alert
-      Alert.alert('操作失败', error.message);
-      setIsFavorite(!isFavorite); // Revert UI
-    },
-  });
-
-  // Sync state with item data when loaded
-  if (item && item.isFavorite !== undefined && !favoriteMutation.isPending) {
-    // Only sync if we haven't manually toggled recently (simplification)
-    // Better approach: use useEffect to sync once
-  }
-
-  // Use effect to sync initial state
-  useState(() => {
-    if (item?.isFavorite !== undefined) {
-      setIsFavorite(item.isFavorite);
-    }
-  });
-
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
       Alert.alert('提示', '请先登录', [
         { text: '取消' },
@@ -72,9 +52,22 @@ export default function ItemDetailScreen() {
       ]);
       return;
     }
+
     // Optimistic UI update
+    const previousState = isFavorite;
     setIsFavorite(!isFavorite);
-    favoriteMutation.mutate();
+    setIsFavoriting(true);
+
+    try {
+      const result = await api.post<{ isFavorite: boolean }>(`/items/${id}/favorite`);
+      setIsFavorite(result.isFavorite);
+    } catch (err) {
+      // Revert on error
+      setIsFavorite(previousState);
+      Alert.alert('操作失败', err instanceof Error ? err.message : '请稍后重试');
+    } finally {
+      setIsFavoriting(false);
+    }
   };
 
   const handleContact = () => {
@@ -133,7 +126,7 @@ export default function ItemDetailScreen() {
           <Text className="text-2xl">←</Text>
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-medium">物品详情</Text>
-        <TouchableOpacity onPress={handleToggleFavorite}>
+        <TouchableOpacity onPress={handleToggleFavorite} disabled={isFavoriting}>
           <Text className="text-2xl">{isFavorite ? '❤️' : '🤍'}</Text>
         </TouchableOpacity>
       </View>
@@ -181,7 +174,6 @@ export default function ItemDetailScreen() {
             <Text className="font-medium text-gray-800">{item.seller.nickname}</Text>
             <Text className="text-gray-500 text-sm">信誉良好</Text>
           </View>
-          {/* School info might not be available in item.seller from list api but is in detail api */}
           <Text className="text-gray-400 text-sm">已认证</Text>
         </View>
 

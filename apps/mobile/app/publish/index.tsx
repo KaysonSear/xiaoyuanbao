@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
@@ -12,10 +12,9 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib';
-import { Category } from '@/types';
+import { Category, Item } from '@/types';
 
 const conditions = ['全新', '9成新', '8成新', '7成新', '6成新以下'];
 
@@ -28,26 +27,25 @@ export default function PublishItemScreen() {
   const [condition, setCondition] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isCatsLoading, setIsCatsLoading] = useState(true);
+  const [isPublishing, setIsPublishing] = useState(false);
 
-  const queryClient = useQueryClient();
+  const fetchCategories = useCallback(async () => {
+    try {
+      setIsCatsLoading(true);
+      const data = await api.get<Category[]>('/categories');
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    } finally {
+      setIsCatsLoading(false);
+    }
+  }, []);
 
-  // 获取分类
-  const { data: categories, isLoading: isCatsLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.get<Category[]>('/categories'),
-  });
-
-  // 发布物品 Mutation
-  const publishMutation = useMutation({
-    mutationFn: (data: unknown) => api.post('/items/create', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-      Alert.alert('发布成功', '您的物品已发布', [{ text: '好的', onPress: () => router.back() }]);
-    },
-    onError: (error: Error) => {
-      Alert.alert('发布失败', error.message);
-    },
-  });
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   // 选择图片
   const handleAddImage = async () => {
@@ -100,19 +98,27 @@ export default function PublishItemScreen() {
       return;
     }
 
-    publishMutation.mutate({
-      title,
-      description,
-      price: parseFloat(price),
-      originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
-      images,
-      condition,
-      categoryId,
-      type: 'sale', // 默认出售
-    });
+    try {
+      setIsPublishing(true);
+      await api.post<Item>('/items/create', {
+        title,
+        description,
+        price: parseFloat(price),
+        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
+        images,
+        condition,
+        categoryId,
+        type: 'sale', // 默认出售
+      });
+      Alert.alert('发布成功', '您的物品已发布', [{ text: '好的', onPress: () => router.back() }]);
+    } catch (error) {
+      Alert.alert('发布失败', error instanceof Error ? error.message : '请稍后重试');
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const isLoading = publishMutation.isPending || isCatsLoading;
+  const isLoading = isPublishing || isCatsLoading;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -231,7 +237,7 @@ export default function PublishItemScreen() {
         <View className="bg-white rounded-xl p-4 mb-4">
           <Text className="text-gray-800 font-medium mb-3">分类</Text>
           <View className="flex-row flex-wrap">
-            {categories?.map((cat) => (
+            {categories?.map((cat: Category) => (
               <TouchableOpacity
                 key={cat.id}
                 className={`px-4 py-2 rounded-full mr-2 mb-2 ${

@@ -1,8 +1,7 @@
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Image } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
 import { Order } from '@/types';
 
@@ -16,15 +15,37 @@ const STATUS_MAP: Record<string, string> = {
 
 export default function OrderListScreen() {
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const {
-    data: orders,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['orders', activeTab],
-    queryFn: () => api.get<Order[]>(`/orders`, { params: { type: activeTab } }),
-  });
+  const fetchOrders = useCallback(
+    async (showRefresh = false) => {
+      try {
+        if (showRefresh) {
+          setIsRefreshing(true);
+        } else {
+          setIsLoading(true);
+        }
+        const data = await api.get<Order[]>('/orders', { type: activeTab });
+        setOrders(data);
+      } catch (error) {
+        console.error('Failed to fetch orders:', error);
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    },
+    [activeTab]
+  );
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const handleRefresh = () => {
+    fetchOrders(true);
+  };
 
   const renderItem = ({ item }: { item: Order }) => (
     <TouchableOpacity
@@ -116,8 +137,8 @@ export default function OrderListScreen() {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 20 }}
-          onRefresh={refetch}
-          refreshing={isLoading}
+          onRefresh={handleRefresh}
+          refreshing={isRefreshing}
           ListEmptyComponent={
             <View className="items-center justify-center py-10">
               <Text className="text-gray-400">暂无订单</Text>

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib';
 import { Order } from '@/types';
 import { useAuthStore } from '@/store';
@@ -17,23 +17,40 @@ const STATUS_MAP: Record<string, string> = {
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
-  const queryClient = useQueryClient();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const { data: order, isLoading } = useQuery({
-    queryKey: ['order', id],
-    queryFn: () => api.get<Order>(`/orders/${id}`),
-    enabled: !!id,
-  });
+  const fetchOrder = useCallback(async () => {
+    if (!id) return;
+    try {
+      setIsLoading(true);
+      const data = await api.get<Order>(`/orders/${id}`);
+      setOrder(data);
+    } catch (error) {
+      console.error('Failed to fetch order:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
-  const updateStatusMutation = useMutation({
-    mutationFn: (action: string) => api.patch(`/orders/${id}`, { action }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', id] });
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
+
+  const updateStatus = async (action: string) => {
+    if (!id) return;
+    try {
+      setIsUpdating(true);
+      await api.patch<Order>(`/orders/${id}`, { action });
+      await fetchOrder(); // Refetch order data
       Alert.alert('操作成功');
-    },
-    onError: (err: Error) => Alert.alert('操作失败', err.message),
-  });
+    } catch (err) {
+      Alert.alert('操作失败', err instanceof Error ? err.message : '请稍后重试');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (isLoading || !order) {
     return (
@@ -98,27 +115,36 @@ export default function OrderDetailScreen() {
         {order.status === 'paid' && isSeller && (
           <TouchableOpacity
             className="bg-primary-500 py-3 rounded-full mb-3"
-            onPress={() => updateStatusMutation.mutate('ship')}
+            onPress={() => updateStatus('ship')}
+            disabled={isUpdating}
           >
-            <Text className="text-white text-center font-bold">确认发货</Text>
+            <Text className="text-white text-center font-bold">
+              {isUpdating ? '处理中...' : '确认发货'}
+            </Text>
           </TouchableOpacity>
         )}
 
         {order.status === 'shipping' && isBuyer && (
           <TouchableOpacity
             className="bg-primary-500 py-3 rounded-full mb-3"
-            onPress={() => updateStatusMutation.mutate('confirm')}
+            onPress={() => updateStatus('confirm')}
+            disabled={isUpdating}
           >
-            <Text className="text-white text-center font-bold">确认收货</Text>
+            <Text className="text-white text-center font-bold">
+              {isUpdating ? '处理中...' : '确认收货'}
+            </Text>
           </TouchableOpacity>
         )}
 
         {(order.status === 'pending' || (order.status === 'paid' && isSeller)) && (
           <TouchableOpacity
             className="bg-white border border-gray-300 py-3 rounded-full"
-            onPress={() => updateStatusMutation.mutate('cancel')}
+            onPress={() => updateStatus('cancel')}
+            disabled={isUpdating}
           >
-            <Text className="text-gray-600 text-center">取消订单</Text>
+            <Text className="text-gray-600 text-center">
+              {isUpdating ? '处理中...' : '取消订单'}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
