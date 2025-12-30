@@ -78,14 +78,7 @@ export default function ItemDetailScreen() {
   };
 
   const handleContact = () => {
-    if (!isAuthenticated) {
-      Alert.alert('提示', '请先登录', [
-        { text: '取消' },
-        { text: '去登录', onPress: () => router.push('/(auth)/login') },
-      ]);
-      return;
-    }
-    router.push(`/message/${item?.seller.id}`);
+    Alert.alert('提示', '聊天功能暂时不可用，请直接下单购买');
   };
 
   const handleBuy = () => {

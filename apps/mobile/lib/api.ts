@@ -1,6 +1,5 @@
 import Constants from 'expo-constants';
 import { useAuthStore } from '../store';
-
 import { Platform } from 'react-native';
 
 // API 基础URL
@@ -58,30 +57,20 @@ async function request<T>(endpoint: string, config: RequestConfig = {}): Promise
 
 // API 客户端
 export const api = {
-  get: <T>(endpoint: string, config?: RequestConfig) =>
-    request<T>(endpoint, { ...config, method: 'GET' }),
+  get: <T>(endpoint: string, params?: Record<string, string>) =>
+    request<T>(endpoint, { method: 'GET', params }),
 
-  post: <T>(endpoint: string, data?: unknown, config?: RequestConfig) =>
+  post: <T>(endpoint: string, data?: any) =>
     request<T>(endpoint, {
-      ...config,
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     }),
 
-  put: <T>(endpoint: string, data?: unknown, config?: RequestConfig) =>
+  put: <T>(endpoint: string, data?: any) =>
     request<T>(endpoint, {
-      ...config,
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     }),
 
-  patch: <T>(endpoint: string, data?: unknown, config?: RequestConfig) =>
-    request<T>(endpoint, {
-      ...config,
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }),
-
-  delete: <T>(endpoint: string, config?: RequestConfig) =>
-    request<T>(endpoint, { ...config, method: 'DELETE' }),
+  delete: <T>(endpoint: string) => request<T>(endpoint, { method: 'DELETE' }),
 };
