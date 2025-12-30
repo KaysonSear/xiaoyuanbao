@@ -116,9 +116,6 @@ export default function ItemDetailScreen() {
         <View className="px-4 py-4">
           <View className="flex-row items-baseline">
             <Text className="text-red-500 text-3xl font-bold">¥{item.price}</Text>
-            {item.originalPrice && (
-              <Text className="text-gray-400 line-through ml-2">¥{item.originalPrice}</Text>
-            )}
           </View>
           <Text className="text-lg text-gray-800 mt-2 font-medium">{item.title}</Text>
           <View className="flex-row mt-2 space-x-2">
@@ -126,10 +123,7 @@ export default function ItemDetailScreen() {
               {item.condition}
             </Text>
             <Text className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs ml-2">
-              {item.category.name}
-            </Text>
-            <Text className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs ml-2">
-              {item.type === 'sale' ? '出售' : '出租'}
+              {item.category}
             </Text>
           </View>
         </View>
@@ -162,8 +156,7 @@ export default function ItemDetailScreen() {
 
         {/* 浏览量等信息 */}
         <View className="px-4 py-2 flex-row pb-8">
-          <Text className="text-gray-400 text-sm">👁️ {item.views}次浏览</Text>
-          <Text className="text-gray-400 text-sm ml-4">
+          <Text className="text-gray-400 text-sm">
             📅 发布于 {new Date(item.createdAt).toLocaleDateString()}
           </Text>
         </View>

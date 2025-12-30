@@ -44,7 +44,7 @@ export default function OrderDetailScreen() {
   }
 
   const isBuyer = user?.id === order.buyerId;
-  const isSeller = user?.id === order.sellerId;
+  const isSeller = user?.id === order.item.seller.id;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -58,27 +58,19 @@ export default function OrderDetailScreen() {
 
       <View className="p-4 bg-primary-500">
         <Text className="text-white text-lg font-bold">{STATUS_MAP[order.status]}</Text>
-        <Text className="text-white text-sm opacity-80 mt-1">订单号: {order.orderNo}</Text>
+        <Text className="text-white text-sm opacity-80 mt-1">ID: {order.id.slice(-8)}</Text>
       </View>
 
       <View className="bg-white mt-2 p-4">
-        <Text className="text-gray-800 font-medium mb-2">收货信息</Text>
+        <Text className="text-gray-800 font-medium mb-2">订单信息</Text>
         <View className="flex-row">
-          <Text className="text-gray-500 w-20">联系人</Text>
-          <Text className="text-gray-800 flex-1">{order.contactPhone}</Text>
+          <Text className="text-gray-500 w-20">买家</Text>
+          <Text className="text-gray-800 flex-1">{order.buyer.nickname}</Text>
         </View>
         <View className="flex-row mt-2">
-          <Text className="text-gray-500 w-20">配送方式</Text>
-          <Text className="text-gray-800 flex-1">
-            {order.deliveryType === 'delivery' ? '快递' : '自提'}
-          </Text>
+          <Text className="text-gray-500 w-20">下单时间</Text>
+          <Text className="text-gray-800 flex-1">{new Date(order.createdAt).toLocaleString()}</Text>
         </View>
-        {order.address && (
-          <View className="flex-row mt-2">
-            <Text className="text-gray-500 w-20">地址</Text>
-            <Text className="text-gray-800 flex-1">{order.address}</Text>
-          </View>
-        )}
       </View>
 
       <View className="bg-white mt-2 p-4 flex-row">

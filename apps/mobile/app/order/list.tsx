@@ -32,7 +32,7 @@ export default function OrderListScreen() {
       onPress={() => router.push(`/order/${item.id}`)}
     >
       <View className="flex-row justify-between mb-2">
-        <Text className="text-gray-500 text-xs">订单号: {item.orderNo}</Text>
+        <Text className="text-gray-500 text-xs">ID: {item.id.slice(-8)}</Text>
         <Text className="text-primary-500 font-medium text-xs">{STATUS_MAP[item.status]}</Text>
       </View>
 
@@ -58,11 +58,13 @@ export default function OrderListScreen() {
         <View className="flex-row items-center">
           <View className="w-5 h-5 bg-gray-200 rounded-full mr-2 items-center justify-center">
             <Text className="text-[10px]">
-              {activeTab === 'buy' ? item.seller.nickname[0] : item.buyer.nickname[0]}
+              {activeTab === 'buy' ? item.item.seller.nickname[0] : item.buyer.nickname[0]}
             </Text>
           </View>
           <Text className="text-gray-500 text-xs">
-            {activeTab === 'buy' ? `卖家: ${item.seller.nickname}` : `买家: ${item.buyer.nickname}`}
+            {activeTab === 'buy'
+              ? `卖家: ${item.item.seller.nickname}`
+              : `买家: ${item.buyer.nickname}`}
           </Text>
         </View>
       </View>
