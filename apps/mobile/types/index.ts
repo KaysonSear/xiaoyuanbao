@@ -1,3 +1,13 @@
+export interface User {
+  id: string;
+  phone: string;
+  nickname: string;
+  avatar?: string;
+  school?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Category {
   id: string;
   name: string;

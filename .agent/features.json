@@ -447,7 +447,9 @@
           "name": "移动端编辑个人信息页面",
           "priority": "medium",
           "hours": 2,
-          "platform": "mobile"
+          "platform": "mobile",
+          "status": "completed",
+          "completedDate": "2025-12-30"
         }
       ]
     },

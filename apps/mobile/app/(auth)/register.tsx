@@ -48,7 +48,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await api.post('/users/register', { phone, password, nickname });
+      await api.post('/auth/register', { phone, password, nickname });
       Alert.alert('注册成功', '请登录', [
         { text: '好的', onPress: () => router.replace('/(auth)/login') },
       ]);

@@ -12,6 +12,7 @@ import {
 import { Link, router } from 'expo-router';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib';
+import { User } from '@/types';
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('');
@@ -33,15 +34,9 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const data = await api.post<{
-        user: {
-          id: string;
-          phone: string;
-          nickname: string;
-          avatar?: string;
-          isVerified: boolean;
-        };
+        user: User;
         token: string;
-      }>('/users/login', { phone, password });
+      }>('/auth/login', { phone, password });
 
       login(data.user, data.token);
       router.replace('/(tabs)');

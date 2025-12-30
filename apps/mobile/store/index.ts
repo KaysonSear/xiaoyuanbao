@@ -2,15 +2,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SecureStorage } from '../lib/secure-storage';
+import { User } from '../types';
 
 // ============= 用户状态 =============
-interface User {
-  id: string;
-  phone: string;
-  nickname: string;
-  avatar?: string;
-  school?: string;
-}
 
 interface AuthState {
   user: User | null;
