@@ -9,7 +9,7 @@ interface User {
   phone: string;
   nickname: string;
   avatar?: string;
-  isVerified: boolean;
+  school?: string;
 }
 
 interface AuthState {
