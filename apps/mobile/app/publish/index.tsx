@@ -25,7 +25,7 @@ export default function PublishItemScreen() {
   const [price, setPrice] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
   const [condition, setCondition] = useState('');
-  const [categoryId, setCategoryId] = useState('');
+  const [categoryName, setCategoryName] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCatsLoading, setIsCatsLoading] = useState(true);
@@ -56,7 +56,7 @@ export default function PublishItemScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1], // Square aspect ratio for items
-        quality: 0.5,
+        quality: 0.15, // 压缩到 15% 质量,减少 Base64 大小
         base64: true,
       });
 
@@ -88,7 +88,7 @@ export default function PublishItemScreen() {
   }
 
   const handleSubmit = async () => {
-    if (!title || !description || !price || !condition || !categoryId) {
+    if (!title || !description || !price || !condition || !categoryName) {
       Alert.alert('提示', '请填写完整信息');
       return;
     }
@@ -104,11 +104,9 @@ export default function PublishItemScreen() {
         title,
         description,
         price: parseFloat(price),
-        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
         images,
         condition,
-        categoryId,
-        type: 'sale', // 默认出售
+        category: categoryName,
       });
       Alert.alert('发布成功', '您的物品已发布', [{ text: '好的', onPress: () => router.back() }]);
     } catch (error) {
@@ -241,11 +239,11 @@ export default function PublishItemScreen() {
               <TouchableOpacity
                 key={cat.id}
                 className={`px-4 py-2 rounded-full mr-2 mb-2 ${
-                  categoryId === cat.id ? 'bg-primary-500' : 'bg-gray-100'
+                  categoryName === cat.name ? 'bg-primary-500' : 'bg-gray-100'
                 }`}
-                onPress={() => setCategoryId(cat.id)}
+                onPress={() => setCategoryName(cat.name)}
               >
-                <Text className={categoryId === cat.id ? 'text-white' : 'text-gray-600'}>
+                <Text className={categoryName === cat.name ? 'text-white' : 'text-gray-600'}>
                   {cat.name}
                 </Text>
               </TouchableOpacity>

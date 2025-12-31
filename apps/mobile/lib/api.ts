@@ -35,24 +35,31 @@ async function request<T>(endpoint: string, config: RequestConfig = {}): Promise
     url += `?${searchParams.toString()}`;
   }
 
-  // 发起请求
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...init.headers,
-    },
-  });
+  console.log('[API] Requesting:', url);
 
-  // 解析响应
-  const json = (await response.json()) as ApiResponse<T>;
+  try {
+    // 发起请求
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...init.headers,
+      },
+    });
 
-  if (!response.ok || !json.success) {
-    throw new Error(json.error?.message || '请求失败');
+    // 解析响应
+    const json = (await response.json()) as ApiResponse<T>;
+
+    if (!response.ok || !json.success) {
+      throw new Error(json.error?.message || '请求失败');
+    }
+
+    return json.data as T;
+  } catch (error) {
+    console.error('[API] Request failed:', url, error);
+    throw error;
   }
-
-  return json.data as T;
 }
 
 // API 客户端

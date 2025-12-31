@@ -21,8 +21,8 @@ export default function MyItemsScreen() {
         } else {
           setIsLoading(true);
         }
-        const data = await api.get<Item[]>('/items', { sellerId: user.id });
-        setItems(data);
+        const response = await api.get<{ items: Item[] }>('/items', { sellerId: user.id });
+        setItems(response.items || []);
       } catch (error) {
         console.error('Failed to fetch my items:', error);
       } finally {

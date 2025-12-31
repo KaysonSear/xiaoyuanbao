@@ -6,7 +6,7 @@ import { prisma, successResponse, errors, env } from '@/lib';
 // 创建物品 schema
 const createItemSchema = z.object({
   title: z.string().min(2, '标题至少2个字符').max(50, '标题最多50个字符'),
-  description: z.string().min(10, '描述至少10个字符').max(2000, '描述最多2000个字符'),
+  description: z.string().min(2, '描述至少2个字符').max(2000, '描述最多2000个字符'),
   price: z.number().min(0.01, '价格必须大于0'),
   images: z
     .array(
@@ -52,9 +52,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    console.error('Create item received body:', JSON.stringify(body, null, 2));
     const parsed = createItemSchema.safeParse(body);
 
     if (!parsed.success) {
+      console.error('Validation errors:', JSON.stringify(parsed.error.errors, null, 2));
       return errors.validation(parsed.error);
     }
 

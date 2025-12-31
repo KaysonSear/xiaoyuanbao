@@ -26,7 +26,7 @@ async function getCurrentUser(request: NextRequest) {
 }
 
 // POST /api/items/:id/favorite - 收藏/取消收藏物品
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser(request);
     if (!user) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
-    const { id: itemId } = params;
+    const { id: itemId } = await params;
 
     const existingFavorite = await prisma.favorite.findUnique({
       where: {

@@ -34,45 +34,63 @@ async function main() {
   console.log(`👤 Created ${users.length} users`);
 
   // 3. Create Items
-  const categories = ['Electronics', 'Books', 'Clothing', 'Sports', 'Other'];
-  const titles = [
-    'iPhone 13 99新',
-    '考研数学复习全书',
-    '耐克篮球鞋',
-    '折叠自行车',
-    'JBL蓝牙音箱',
-    'iPad Pro 2021',
-    'C++ Primer Plus',
-    '阿迪达斯运动裤',
-    '尤尼克斯羽毛球拍',
-    '罗技机械键盘',
+  // 使用与前端一致的中文分类名
+  const categoryItems = [
+    // 电子数码
+    { category: '电子数码', title: 'iPhone 14 Pro 256G 深空黑', price: 5999, condition: '99新' },
+    { category: '电子数码', title: 'MacBook Air M2 256G', price: 6800, condition: '98新' },
+    { category: '电子数码', title: 'AirPods Pro 2代 降噪', price: 899, condition: '95新' },
+    { category: '电子数码', title: 'iPad Pro 2022 11寸', price: 4500, condition: '99新' },
+    { category: '电子数码', title: '索尼WH-1000XM5耳机', price: 1599, condition: '全新' },
+    { category: '电子数码', title: '罗技G Pro无线鼠标', price: 450, condition: '9成新' },
+    // 书籍教材
+    { category: '书籍教材', title: '考研数学全书张宇18讲', price: 35, condition: '9成新' },
+    { category: '书籍教材', title: 'C++ Primer Plus 第6版', price: 45, condition: '8成新' },
+    { category: '书籍教材', title: '高等数学同济第七版', price: 25, condition: '9成新' },
+    { category: '书籍教材', title: '英语六级真题解析', price: 20, condition: '全新' },
+    // 服饰鞋包
+    { category: '服饰鞋包', title: 'Nike Air Jordan 1 熊猫', price: 650, condition: '99新' },
+    { category: '服饰鞋包', title: '阿迪达斯运动T恤', price: 89, condition: '全新' },
+    { category: '服饰鞋包', title: "Levi's 501牛仔裤", price: 199, condition: '95新' },
+    { category: '服饰鞋包', title: '北面冲锋衣黑色M码', price: 399, condition: '9成新' },
+    // 生活用品
+    { category: '生活用品', title: '小米台灯Pro护眼灯', price: 89, condition: '全新' },
+    { category: '生活用品', title: '戴森吹风机HD08', price: 1800, condition: '99新' },
+    { category: '生活用品', title: '米家电饭煲3L', price: 150, condition: '9成新' },
+    { category: '生活用品', title: '宜家办公椅白色', price: 299, condition: '8成新' },
+    // 运动户外
+    { category: '运动户外', title: '尤尼克斯羽毛球拍', price: 280, condition: '95新' },
+    { category: '运动户外', title: '迪卡侬折叠自行车', price: 599, condition: '9成新' },
+    { category: '运动户外', title: '斯伯丁篮球7号', price: 120, condition: '全新' },
+    { category: '运动户外', title: '李宁跑步鞋飞电3', price: 450, condition: '99新' },
+    // 美妆护肤
+    { category: '美妆护肤', title: 'SK-II神仙水230ml', price: 850, condition: '全新' },
+    { category: '美妆护肤', title: '兰蔻小黑瓶精华', price: 680, condition: '全新' },
+    { category: '美妆护肤', title: '雅诗兰黛眼霜15ml', price: 320, condition: '99新' },
+    // 其他
+    { category: '其他', title: '任天堂Switch OLED', price: 1800, condition: '99新' },
+    { category: '其他', title: '富士拍立得mini11', price: 450, condition: '全新' },
+    { category: '其他', title: '乐高哈利波特城堡', price: 399, condition: '全新' },
   ];
 
-  const itemsData = [];
-  for (let i = 0; i < 20; i++) {
-    const seller = users[Math.floor(Math.random() * users.length)];
-    if (!seller) continue;
-
-    const titleIndex = i % titles.length;
-    const titleSuffix = Math.floor(i / titles.length) + 1;
-    const titleBase = titles[titleIndex] ?? 'Item';
-    const title = titleBase + titleSuffix;
-
-    itemsData.push({
-      title,
-      description: `这是一件非常好的商品，成色很新，${title}，欢迎购买！`,
-      price: Math.floor(Math.random() * 1000) + 50,
+  const itemsData = categoryItems.map((item, i) => {
+    const seller = users[i % users.length];
+    if (!seller) throw new Error('No seller found');
+    return {
+      title: item.title,
+      description: `闲置转让，${item.title}，成色${item.condition}，非诚勿扰，欢迎咨询！`,
+      price: item.price,
       images: [
-        `https://picsum.photos/seed/${i}/400/400`,
-        `https://picsum.photos/seed/${i + 100}/400/400`,
+        `https://picsum.photos/seed/${item.title.slice(0, 5)}${i}/400/400`,
+        `https://picsum.photos/seed/${item.title.slice(0, 5)}${i + 100}/400/400`,
       ],
-      condition: ['全新', '99新', '9成新', '8成新'][Math.floor(Math.random() * 4)] ?? '全新',
-      category: categories[Math.floor(Math.random() * categories.length)] ?? 'Other',
+      condition: item.condition,
+      category: item.category,
       status: 'available',
       sellerId: seller.id,
       createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
-    });
-  }
+    };
+  });
 
   await prisma.item.createMany({ data: itemsData });
   console.log(`📦 Created ${itemsData.length} items`);

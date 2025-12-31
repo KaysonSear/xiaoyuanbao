@@ -4,7 +4,7 @@ import { prisma, successResponse, errors } from '@/lib';
 
 // 搜索参数 schema
 const searchSchema = z.object({
-  q: z.string().min(1, '搜索关键词不能为空').max(100),
+  q: z.string().max(100).optional().default(''),
   page: z.coerce.number().min(1).default(1),
   pageSize: z.coerce.number().min(1).max(50).default(20),
   category: z.string().optional(),
@@ -46,11 +46,15 @@ export async function GET(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, any> = {
       status: 'available',
-      OR: [
+    };
+
+    // 关键词搜索 (只在有关键词时添加)
+    if (q && q.trim()) {
+      where.OR = [
         { title: { contains: q, mode: 'insensitive' } },
         { description: { contains: q, mode: 'insensitive' } },
-      ],
-    };
+      ];
+    }
 
     // 分类筛选
     if (category) {

@@ -136,10 +136,24 @@ export async function GET(request: NextRequest) {
          return { ...item, isFavorite: isFav }
       }))
     */
-    // 鉴于性能，暂不返回列表页的 isFavorite, 详情页再查 (或者 lazy load)
+    // 处理图片: 压缩后的 Base64 可以返回,但大的 Base64 使用占位符
+    const MAX_BASE64_SIZE = 200000; // 200KB 阈值 (前端已压缩到 15% 质量)
+    const processedItems = items.map((item) => ({
+      ...item,
+      images: item.images.map((img: string) => {
+        // http 图片直接返回
+        if (img.startsWith('http')) return img;
+        // Base64 图片检查大小
+        if (img.startsWith('data:image/') && img.length < MAX_BASE64_SIZE) {
+          return img; // 小于 50KB 返回原图
+        }
+        // 大的 Base64 返回占位符
+        return 'https://via.placeholder.com/400x400?text=Image';
+      }),
+    }));
 
     return successResponse({
-      items,
+      items: processedItems,
       pagination: {
         page,
         pageSize,

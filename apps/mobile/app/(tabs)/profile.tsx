@@ -2,9 +2,32 @@ import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useAuthStore } from '@/store';
+import { useState, useEffect, useCallback } from 'react';
+import { api } from '@/lib';
+
+interface UserStats {
+  published: number;
+  sold: number;
+  bought: number;
+}
 
 export default function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuthStore();
+  const [stats, setStats] = useState<UserStats>({ published: 0, sold: 0, bought: 0 });
+
+  const fetchStats = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const data = await api.get<UserStats>('/users/me/stats');
+      setStats(data);
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const handleLogout = () => {
     logout();
@@ -80,14 +103,18 @@ export default function ProfileScreen() {
         {/* 统计信息 */}
         <View className="bg-white mt-2 flex-row py-4">
           {[
-            { label: '发布', value: 0 },
-            { label: '已售', value: 0 },
-            { label: '已买', value: 0 },
+            { label: '发布', value: stats.published, path: '/profile/my-items' },
+            { label: '已售', value: stats.sold, path: '/order/list?type=sell' },
+            { label: '已买', value: stats.bought, path: '/order/list?type=buy' },
           ].map((stat, index) => (
-            <View key={index} className="flex-1 items-center">
+            <TouchableOpacity
+              key={index}
+              className="flex-1 items-center"
+              onPress={() => router.push(stat.path as never)}
+            >
               <Text className="text-xl font-bold text-gray-800">{stat.value}</Text>
               <Text className="text-gray-500 text-sm mt-1">{stat.label}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 

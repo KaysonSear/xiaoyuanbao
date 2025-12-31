@@ -6,6 +6,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Modal,
+  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +24,8 @@ export default function ItemDetailScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isFavoriting, setIsFavoriting] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const fetchItem = useCallback(async () => {
     if (!id) return;
@@ -132,9 +136,16 @@ export default function ItemDetailScreen() {
       </View>
 
       <ScrollView className="flex-1">
-        {/* 图片区域 */}
-        <View className="h-80 bg-gray-100 items-center justify-center">
-          {item.images[0]?.startsWith('http') ? (
+        {/* 图片区域 - 点击全屏 */}
+        <TouchableOpacity
+          className="h-80 bg-gray-100 items-center justify-center"
+          onPress={() => {
+            setSelectedImageIndex(0);
+            setIsImageViewerOpen(true);
+          }}
+          activeOpacity={0.9}
+        >
+          {item.images[0]?.startsWith('http') || item.images[0]?.startsWith('data:image') ? (
             <Image
               source={{ uri: item.images[0] }}
               className="w-full h-full"
@@ -143,7 +154,12 @@ export default function ItemDetailScreen() {
           ) : (
             <Text className="text-8xl">{item.images[0] || '📦'}</Text>
           )}
-        </View>
+          {item.images.length > 0 && (
+            <View className="absolute bottom-3 right-3 bg-black/50 px-3 py-1 rounded-full">
+              <Text className="text-white text-xs">👆 点击查看大图</Text>
+            </View>
+          )}
+        </TouchableOpacity>
 
         {/* 价格和标题 */}
         <View className="px-4 py-4">
@@ -216,6 +232,72 @@ export default function ItemDetailScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* 全屏图片查看器 Modal */}
+      <Modal
+        visible={isImageViewerOpen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsImageViewerOpen(false)}
+      >
+        <View className="flex-1 bg-black items-center justify-center">
+          <TouchableOpacity
+            className="absolute top-12 right-4 z-10 bg-white/20 rounded-full p-2"
+            onPress={() => setIsImageViewerOpen(false)}
+          >
+            <Text className="text-white text-2xl">✕</Text>
+          </TouchableOpacity>
+
+          {/* 水平滑动图片 */}
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(e) => {
+              const index = Math.round(
+                e.nativeEvent.contentOffset.x / Dimensions.get('window').width
+              );
+              setSelectedImageIndex(index);
+            }}
+            contentOffset={{ x: selectedImageIndex * Dimensions.get('window').width, y: 0 }}
+          >
+            {item.images.map((img, idx) => (
+              <Image
+                key={idx}
+                source={{ uri: img }}
+                style={{
+                  width: Dimensions.get('window').width,
+                  height: Dimensions.get('window').height * 0.8,
+                }}
+                resizeMode="contain"
+              />
+            ))}
+          </ScrollView>
+
+          {/* 图片索引指示器 */}
+          {item.images.length > 1 && (
+            <View className="absolute bottom-20 flex-row">
+              {item.images.map((_, idx) => (
+                <View
+                  key={idx}
+                  className={`w-2 h-2 mx-1 rounded-full ${
+                    idx === selectedImageIndex ? 'bg-white' : 'bg-white/40'
+                  }`}
+                />
+              ))}
+            </View>
+          )}
+
+          {/* 图片计数 */}
+          {item.images.length > 1 && (
+            <View className="absolute top-12 left-4 bg-black/50 px-3 py-1 rounded-full">
+              <Text className="text-white text-sm">
+                {selectedImageIndex + 1} / {item.images.length}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

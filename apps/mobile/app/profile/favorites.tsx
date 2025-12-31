@@ -17,10 +17,11 @@ export default function MyFavoritesScreen() {
       } else {
         setIsLoading(true);
       }
-      const data = await api.get<Item[]>('/items', { isFavorite: 'true' });
-      setItems(data);
+      const response = await api.get<{ items: Item[] }>('/items', { isFavorite: 'true' });
+      setItems(response?.items || []);
     } catch (error) {
       console.error('Failed to fetch favorites:', error);
+      setItems([]);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -41,7 +42,7 @@ export default function MyFavoritesScreen() {
       onPress={() => router.push(`/item/${item.id}`)}
     >
       <View className="w-24 h-24 bg-gray-100 rounded-lg mr-3 overflow-hidden items-center justify-center">
-        {item.images?.[0]?.startsWith('http') ? (
+        {item.images?.[0]?.startsWith('http') || item.images?.[0]?.startsWith('data:image') ? (
           <Image source={{ uri: item.images[0] }} className="w-full h-full" />
         ) : (
           <Text className="text-3xl">📦</Text>
